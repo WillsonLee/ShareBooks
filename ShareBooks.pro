@@ -25,10 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    3rdParty/CarouselImageWindow.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    3rdParty/CarouselImageWindow.h
 
 FORMS += \
         mainwindow.ui
+
+INCLUDEPATH +=3rdParty
+
+RESOURCES += \
+    icons.qrc
