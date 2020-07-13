@@ -15,9 +15,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->setCurrentIndex(0);
     //init carousel view
     initCarousel();
+    //set buttons style and size
     ui->borrow_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
     ui->return_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
     ui->share_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
+    int control_width=this->width()-36;//36 is approximately the left right margins combined
+    int control_height=(this->height()-30)*3/8;//is approximately the spacing and toolbar,menu,title heights combined
+    ui->borrow_button->setFixedWidth(control_width-6);
+    ui->borrow_button->setFixedHeight((control_height-6)/2-4);
+    ui->return_button->setFixedWidth((ui->borrow_button->width()-6)/2);//6 is spacing between return_button and share_button
+    ui->return_button->setFixedHeight(ui->borrow_button->height());
+    ui->share_button->setFixedWidth(ui->return_button->width());
+    ui->share_button->setFixedHeight(ui->return_button->height());
 }
 
 void MainWindow::initCarousel()
