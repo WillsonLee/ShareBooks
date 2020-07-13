@@ -15,8 +15,21 @@
    ./qt-opensource-linux-x64-5.10.1.run
    ```
 
-2. 人脸识别库：
+2. 人脸识别库:[face_recognition](https://github.com/ageitgey/face_recognition)
 
+   修改pip镜像源为清华镜像
+   ```shell
+   mkdir ~/.pip
+   vim ~/.pip/pip.conf
+   # pip.conf文件内容如下：
+   [global]
+   index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+   ```
+   之后再`pip install face_recognition`即可安装各种依赖(或临时使用镜像`pip install -i https://pypi.tuna.tsinghua.edu.cn/simple face_recognition`)。若安装dlib库时出现问题，可能是`gcc`或`g++`版本的问题，在`pip install recognition`之前，可以指定`gcc`或`g++`的位置
+   ```shell
+   export CC=/usr/local/bin/gcc
+   export CXX=/usr/local/bin/g++ 
+   ```
 3. 
 
 ## 3.编译与运行
