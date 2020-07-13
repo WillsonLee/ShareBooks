@@ -27,6 +27,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->return_button->setFixedHeight(ui->borrow_button->height());
     ui->share_button->setFixedWidth(ui->return_button->width());
     ui->share_button->setFixedHeight(ui->return_button->height());
+    //read book info from datebase
+    top_books=Cache<BookInfo>(10);
+    scanBooks("../datebase/books.txt");
+    //read pesonnel data
+    readStuffInfo();
+    //read book cover image
+    readBookCoverImages();
+    //read stuff faces
+    readStuffFaces();
 }
 
 void MainWindow::initCarousel()
@@ -37,6 +46,31 @@ void MainWindow::initCarousel()
         ui->adsView->addImage(list.at(i).absoluteFilePath());
     }
     ui->adsView->startPlay();
+}
+
+void MainWindow::scanBooks(QString file)
+{
+
+}
+
+void MainWindow::saveBooksData()
+{
+
+}
+
+void MainWindow::readStuffInfo()
+{
+
+}
+
+void MainWindow::readBookCoverImages()
+{
+
+}
+
+void MainWindow::readStuffFaces()
+{
+
 }
 
 MainWindow::~MainWindow()

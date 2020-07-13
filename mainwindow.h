@@ -2,6 +2,102 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDateTime>
+#include <QVector>
+#include <QHash>
+#include <QImage>
+#include <climits>
+
+struct BookInfo{
+    int ISBN;//use as book id
+    QString title;
+    QString author;
+    int year;
+    QString brief;
+    uint timeStamp;
+    int frequency;
+    void setTimeStamp(QDateTime time){
+        timeStamp=time.toTime_t();
+    }
+    QDateTime getDateTime(){
+        return QDateTime::fromTime_t(timeStamp);
+    }
+    friend  bool operator<(const BookInfo &a,const BookInfo &b) {
+        return  a.frequency<b.frequency || (a.frequency==b.frequency && a.timeStamp<b.timeStamp);
+    }
+};
+
+struct StuffInfo{
+    int id;
+    QString name;
+    int quota;
+    QVector<int> current_hold;
+};
+
+template<typename T>
+struct Identical{
+    //identical if having the same address
+    bool operator ()(const T &a,const T &b){return &a==&b;}
+};
+
+template<>
+struct Identical<BookInfo>{
+    bool operator ()(const BookInfo &a,const BookInfo &b){return a.ISBN==b.ISBN;}
+};
+
+template<typename T,typename _Comp=std::less<T>,typename _Identical=Identical<T> >
+class Cache{
+private:
+    QVector<T> data;
+    int cap;
+    bool _allow_duplicate;
+    _Comp compare;
+    _Identical identical;
+public:
+    Cache(){
+        cap=INT_MAX;
+        _allow_duplicate=false;
+    }
+    Cache(int capacity,int allow_duplicate=false){
+        cap=capacity;
+        _allow_duplicate=allow_duplicate;
+    }
+    void put(const T &target){
+        if(!_allow_duplicate){
+            remove(target);
+        }
+        int pos=data.size()-1;
+        for(;pos>=0;){
+            if(compare(data[pos],target)){//if data[pos]<target
+                --pos;
+            }
+            else{
+                break;
+            }
+        }
+        //data[pos]>=target>data[pos+1]
+        data.insert(data.begin()+pos+1,target);
+        while (data.size()>cap) {
+            data.pop_back();
+        }
+    }
+    bool remove(const T &target){
+        for(int i=0;i<data.size();++i){
+            if(identical(target,data[i])){
+                data.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+    void removeAt(int i){
+        if(i>=0&&i<data.size()){
+            data.remove(i);
+        }
+    }
+    T at(int i){return data[i];}
+    int size(){return data.size();}
+};
 
 namespace Ui {
 class MainWindow;
@@ -14,6 +110,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     void initCarousel();
+    void scanBooks(QString file);
+    void saveBooksData();
+    void readStuffInfo();
+    void readBookCoverImages();
+    void readStuffFaces();
     ~MainWindow();
 
 private slots:
@@ -25,6 +126,11 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QHash<int,BookInfo> books;
+    Cache<BookInfo> top_books;
+    QHash<int,StuffInfo> stuffs;
+    QHash<int,QVector<QImage> > faces;
+    QHash<int,QImage> bookCovers;
 };
 
 #endif // MAINWINDOW_H
