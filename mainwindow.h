@@ -17,6 +17,7 @@ struct BookInfo{
     QString brief;
     uint timeStamp;
     int frequency;
+    int inCloset;//书籍是否在库,1:in,0:not in
     void setTimeStamp(QDateTime time){
         timeStamp=time.toTime_t();
     }
@@ -124,6 +125,8 @@ public:
     void toFaceModule();
     //跳转到书籍模块
     void toBookModule();
+    //返回主页
+    void backToMain();
     ~MainWindow();
 
 private slots:
@@ -142,6 +145,8 @@ private:
     QHash<int,QImage> bookCovers;
     QTimer *timer;
     int timeout;//time duration after which return to main page
+    int currentUser;
+    int currentBook;
 };
 
 #endif // MAINWINDOW_H

@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     readStuffInfo();
     //read book cover image
     readBookCoverImages();
+    //init current status of face recog and book info
+    currentUser=-1;
+    currentBook=-1;
 }
 
 void MainWindow::initCarousel()
@@ -83,7 +86,7 @@ void MainWindow::toFaceModule()
     }
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,[&](){
-        ui->stackedWidget->setCurrentIndex(0);
+        backToMain();
     });
     timer->start(timeout);
 }
@@ -96,9 +99,17 @@ void MainWindow::toBookModule()
     }
     timer=new QTimer(this);
     connect(timer,&QTimer::timeout,this,[&](){
-        ui->stackedWidget->setCurrentIndex(0);
+        backToMain();
     });
     timer->start(timeout);
+}
+
+void MainWindow::backToMain()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+    currentUser=-1;
+    currentBook=-1;
+
 }
 
 MainWindow::~MainWindow()
