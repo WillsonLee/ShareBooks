@@ -1,10 +1,13 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
+#include "face_recognize.h"
+
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace std;
+
 /*
 Input:
 const string& faces_folder: 存放员工照片的文件夹(./database/faces/)
@@ -13,8 +16,8 @@ const string& unknow_faces: 要识别的图片所在的文件夹(./face_cam/)
 Return:
 vector<string>: 识别结果，可能有多个结果，所以存放在vector中。
 */
-vector<string> face_recoginize(const string& faces_folder, const string& unknow_faces) {
-    vector<string> res;
+vector<int> face_recognize(const string& faces_folder, const string& unknow_faces) {
+    vector<int> res;
     string result_file("./result.txt");
     string cmd = "face_recognition " + faces_folder + " " + unknow_faces + " > " + result_file;
     system(cmd.c_str());
@@ -24,7 +27,11 @@ vector<string> face_recoginize(const string& faces_folder, const string& unknow_
         string line;
         while(getline(in_file, line)){
             int dot_pos = line.find(",");
-            res.push_back(line.substr(dot_pos+1));	    
+            string tmp = line.substr(dot_pos+1);
+            if(tmp == "unknown_person")
+                res.push_back(-1);
+            else
+                res.push_back(stoi(tmp));	    
         }
 	    in_file.close();
     } else{
@@ -35,14 +42,4 @@ vector<string> face_recoginize(const string& faces_folder, const string& unknow_
     system(rm_resfile.c_str());
 
     return res;
-}
-
-int main(){
-    string known_image("./database/faces/");
-    string unknow_images("./face_cam/");
-    vector<string> res = face_recoginize(known_image, unknow_images);
-    for(auto i : res)
-        cout << i << endl;
-    
-    return 0;
 }
