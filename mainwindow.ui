@@ -15,6 +15,18 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>4</number>
+    </property>
+    <property name="spacing">
+     <number>3</number>
+    </property>
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="frameShape">
@@ -234,7 +246,50 @@ borrow_button:pressed{border-image: url(:/icons/borrow.png);}</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="face"/>
+      <widget class="QWidget" name="face">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,30">
+        <item alignment="Qt::AlignLeft">
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="leftMargin">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>2</number>
+           </property>
+           <property name="rightMargin">
+            <number>2</number>
+           </property>
+           <property name="bottomMargin">
+            <number>2</number>
+           </property>
+           <item alignment="Qt::AlignLeft|Qt::AlignTop">
+            <widget class="QPushButton" name="faceReturn">
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton{border:2px groove gray;border-radius:10px;padding:2px 4px;}</string>
+             </property>
+             <property name="text">
+              <string>&lt;|back</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget_2" native="true"/>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="id"/>
       <widget class="QWidget" name="book"/>
       <widget class="QWidget" name="info"/>

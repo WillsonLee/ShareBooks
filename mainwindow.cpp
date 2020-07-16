@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QBitmap>
 #include <QPainter>
+#include <face_recognize.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->share_button->setRadius(10);
     //init timer
     timer=NULL;
-    timeout=3000;
+    timeout=3;
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
     scanBooks("../datebase/books.txt");
@@ -85,10 +86,11 @@ void MainWindow::toFaceModule()
         timer->stop();
     }
     timer=new QTimer(this);
+    updateCountDown(timeout);
     connect(timer,&QTimer::timeout,this,[&](){
         backToMain();
     });
-    timer->start(timeout);
+    timer->start(1000);
 }
 
 void MainWindow::toBookModule()
@@ -98,18 +100,26 @@ void MainWindow::toBookModule()
         timer->stop();
     }
     timer=new QTimer(this);
+    updateCountDown(timeout);
     connect(timer,&QTimer::timeout,this,[&](){
         backToMain();
     });
-    timer->start(timeout);
+    timer->start(1000);
 }
 
 void MainWindow::backToMain()
 {
+    if(count_down>0){
+        updateCountDown(count_down-1);
+        return;
+    }
+    if(timer&&timer->isActive()){
+        timer->stop();
+        timer=NULL;
+    }
     ui->stackedWidget->setCurrentIndex(0);
     currentUser=-1;
     currentBook=-1;
-
 }
 
 MainWindow::~MainWindow()
@@ -130,4 +140,21 @@ void MainWindow::on_return_button_clicked()
 void MainWindow::on_share_button_clicked()
 {
     toFaceModule();
+}
+
+void MainWindow::on_faceReturn_clicked()
+{
+    count_down=0;//set time out
+    backToMain();
+}
+
+void MainWindow::updateCountDown(int time)
+{
+    if(ui->stackedWidget->currentIndex()==1){//in face recognition interface
+        count_down=time;
+        ui->faceReturn->setText(QString("<|back(%1)").arg(count_down));
+    }
+    else if(ui->stackedWidget->currentIndex()==3){
+
+    }
 }

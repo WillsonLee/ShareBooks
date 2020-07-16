@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     3rdParty/CarouselImageWindow.cpp \
-    imagebutton.cpp
+    imagebutton.cpp \
+    face_recognize.cpp
 
 HEADERS += \
         mainwindow.h \
     3rdParty/CarouselImageWindow.h \
-    imagebutton.h
+    imagebutton.h \
+    face_recognize.h
 
 FORMS += \
         mainwindow.ui

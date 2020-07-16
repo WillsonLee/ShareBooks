@@ -136,6 +136,8 @@ private slots:
 
     void on_share_button_clicked();
 
+    void on_faceReturn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QHash<int,BookInfo> books;
@@ -144,9 +146,12 @@ private:
     QHash<int,QVector<QImage> > faces;
     QHash<int,QImage> bookCovers;
     QTimer *timer;
-    int timeout;//time duration after which return to main page
+    int timeout;//time duration after which return to main page(in seconds)
+    int count_down;
     int currentUser;
     int currentBook;
+    //count down
+    void updateCountDown(int time);
 };
 
 #endif // MAINWINDOW_H
