@@ -30,9 +30,7 @@
    export CC=/usr/local/bin/gcc
    export CXX=/usr/local/bin/g++ 
    ```
-3. 
 
 ## 3.编译与运行
 
-1. 配置本地第三方库路径——
-2. 编译与调试/运行——在Qt Creator中打开ShareBooks.pro，点击![](images/run.png)调试即可
+在Qt Creator中打开ShareBooks.pro，点击![](images/run.png)调试即可

@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    3rdParty/CarouselImageWindow.cpp
+    3rdParty/CarouselImageWindow.cpp \
+    imagebutton.cpp
 
 HEADERS += \
         mainwindow.h \
-    3rdParty/CarouselImageWindow.h
+    3rdParty/CarouselImageWindow.h \
+    imagebutton.h
 
 FORMS += \
         mainwindow.ui

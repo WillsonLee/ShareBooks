@@ -2,5 +2,8 @@
     <qresource prefix="/icons">
         <file>icons/selected.png</file>
         <file>icons/not_selected.png</file>
+        <file>icons/share.png</file>
+        <file>icons/return.png</file>
+        <file>icons/borrow.png</file>
     </qresource>
 </RCC>

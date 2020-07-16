@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include <QDir>
 #include <QDebug>
+#include <QPixmap>
+#include <QBitmap>
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,18 +18,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stackedWidget->setCurrentIndex(0);
     //init carousel view
     initCarousel();
-    //set buttons style and size
-    ui->borrow_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
-    ui->return_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
-    ui->share_button->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px;");
+    //set buttons size and image
     int control_width=this->width()-36;//36 is approximately the left right margins combined
     int control_height=(this->height()-30)*3/8;//is approximately the spacing and toolbar,menu,title heights combined
     ui->borrow_button->setFixedWidth(control_width-6);
     ui->borrow_button->setFixedHeight((control_height-6)/2-4);
-    ui->return_button->setFixedWidth((ui->borrow_button->width()-6)/2);//6 is spacing between return_button and share_button
+    ui->return_button->setFixedWidth((ui->borrow_button->width()-6)*2/5);//6 is spacing between return_button and share_button
     ui->return_button->setFixedHeight(ui->borrow_button->height());
-    ui->share_button->setFixedWidth(ui->return_button->width());
+    ui->share_button->setFixedWidth(ui->return_button->width()*3/2);
     ui->share_button->setFixedHeight(ui->return_button->height());
+    ui->borrow_button->setImage(QPixmap(":/icons/icons/borrow.png"));
+    ui->borrow_button->setRadius(10);
+    ui->return_button->setImage(QPixmap(":/icons/icons/return.png"));
+    ui->return_button->setRadius(10);
+    ui->share_button->setImage(QPixmap(":/icons/icons/share.png"));
+    ui->share_button->setRadius(10);
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
     scanBooks("../datebase/books.txt");
