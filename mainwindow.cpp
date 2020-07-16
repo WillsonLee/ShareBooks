@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->return_button->setRadius(10);
     ui->share_button->setImage(QPixmap(":/icons/icons/share.png"));
     ui->share_button->setRadius(10);
+    //init timer
+    timer=NULL;
+    timeout=3000;
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
     scanBooks("../datebase/books.txt");
@@ -40,8 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
     readStuffInfo();
     //read book cover image
     readBookCoverImages();
-    //read stuff faces
-    readStuffFaces();
 }
 
 void MainWindow::initCarousel()
@@ -74,9 +75,30 @@ void MainWindow::readBookCoverImages()
 
 }
 
-void MainWindow::readStuffFaces()
+void MainWindow::toFaceModule()
 {
+    ui->stackedWidget->setCurrentIndex(1);
+    if(timer&&timer->isActive()){
+        timer->stop();
+    }
+    timer=new QTimer(this);
+    connect(timer,&QTimer::timeout,this,[&](){
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    timer->start(timeout);
+}
 
+void MainWindow::toBookModule()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+    if(timer&&timer->isActive()){
+        timer->stop();
+    }
+    timer=new QTimer(this);
+    connect(timer,&QTimer::timeout,this,[&](){
+        ui->stackedWidget->setCurrentIndex(0);
+    });
+    timer->start(timeout);
 }
 
 MainWindow::~MainWindow()
@@ -86,15 +108,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_borrow_button_clicked()
 {
-
+    toFaceModule();
 }
 
 void MainWindow::on_return_button_clicked()
 {
-
+    toFaceModule();
 }
 
 void MainWindow::on_share_button_clicked()
 {
-
+    toFaceModule();
 }

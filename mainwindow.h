@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QHash>
 #include <QImage>
+#include <QTimer>
 #include <climits>
 
 struct BookInfo{
@@ -109,12 +110,20 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    //初始化轮播图片
     void initCarousel();
+    //扫描书籍信息（扫描书库所有书籍或者获取扫描仪扫描的书籍信息）
     void scanBooks(QString file);
+    //保存书籍信息
     void saveBooksData();
+    //读取员工信息
     void readStuffInfo();
+    //读取书籍封面信息
     void readBookCoverImages();
-    void readStuffFaces();
+    //跳转到人脸模块
+    void toFaceModule();
+    //跳转到书籍模块
+    void toBookModule();
     ~MainWindow();
 
 private slots:
@@ -131,6 +140,8 @@ private:
     QHash<int,StuffInfo> stuffs;
     QHash<int,QVector<QImage> > faces;
     QHash<int,QImage> bookCovers;
+    QTimer *timer;
+    int timeout;//time duration after which return to main page
 };
 
 #endif // MAINWINDOW_H
