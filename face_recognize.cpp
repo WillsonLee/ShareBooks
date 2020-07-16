@@ -5,8 +5,19 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <stdlib.h>
 
 using namespace std;
+
+string full_cmd="face_recognition";
+
+void initFullPathCmd(){
+    ifstream ifs("../cmd.config");
+    if(ifs){
+        getline(ifs,full_cmd);
+        ifs.close();
+    }
+}
 
 /*
 Input:
@@ -19,7 +30,8 @@ vector<string>: 识别结果，可能有多个结果，所以存放在vector中�
 vector<int> face_recognize(const string& faces_folder, const string& unknow_faces) {
     vector<int> res;
     string result_file("./result.txt");
-    string cmd = "face_recognition " + faces_folder + " " + unknow_faces + " > " + result_file;
+    string cmd = full_cmd + " " + faces_folder + " " + unknow_faces + " > " + result_file;
+//    string cmd = "face_recognition " + faces_folder + " " + unknow_faces + " > " + result_file;
     system(cmd.c_str());
     
     ifstream in_file(result_file);

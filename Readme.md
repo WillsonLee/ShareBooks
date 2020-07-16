@@ -33,4 +33,5 @@
 
 ## 3.编译与运行
 
-在Qt Creator中打开ShareBooks.pro，点击![](images/run.png)调试即可
+- 确保face_recognition正确安装后，执行`./config.sh`配置程序调用`face_recognition`命令时的环境变量
+- 在Qt Creator中打开ShareBooks.pro，点击![](images/run.png)调试即可
