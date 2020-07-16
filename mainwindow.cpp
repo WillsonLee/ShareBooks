@@ -7,6 +7,11 @@
 #include <QPainter>
 #include <face_recognize.h>
 
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -73,6 +78,34 @@ void MainWindow::saveBooksData()
 
 void MainWindow::readStuffInfo()
 {
+    std::string stuff_info_path("./database/stuffs.txt");
+    std::ifstream in_file(stuff_info_path);  // open file
+    if(in_file) {
+        std::string line;
+        while(std::getline(in_file, line)) {  // read a line
+            std::istringstream ss(line);
+            std::string tmp;
+            StuffInfo tmp_stuff;
+            // read id
+            std::getline(ss, tmp, ',');
+            if(tmp.empty())
+                continue;
+            tmp_stuff.id = std::stoi(tmp);
+            // read name
+            std::getline(ss, tmp, ',');
+            tmp_stuff.name = tmp.c_str();
+            // read quota
+            std::getline(ss, tmp, ',');
+            tmp_stuff.quota = std::stoi(tmp);
+            // read currently borrowed books' id
+            while(std::getline(ss, tmp, ',')) {
+                tmp_stuff.current_hold.append(std::stoi(tmp));
+            }
+            stuffs[tmp_stuff.id] = tmp_stuff;
+        }
+    } else {
+        std::cerr << "cann't open stuffs.txt!";
+    }
 
 }
 
