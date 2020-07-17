@@ -414,6 +414,13 @@ void MainWindow::toStuffInfo()
 void MainWindow::toBookModule()
 {
     switchToPage(3);
+    std::vector<std::string> opImgs{"wait.png", "borrow.png", "return.png", "share.png"};
+    //-1:none;0:borrow;1:return;2:share
+    std::string load_path = "../icons/" + opImgs[currentOperation+1];
+
+    QPixmap pix;
+    pix.load(load_path.c_str());
+    ui->operation_image->setPixmap(pix);
 }
 
 void MainWindow::backToMain()
@@ -503,4 +510,31 @@ void MainWindow::on_id_cancel_clicked()
 {
     updateCountDown(0);
     backToMain();
+}
+
+void MainWindow::on_Finish_Op_button_clicked()
+{
+    // Get the ISNB number of the scanned book from the file in ISBN_scan folder
+    std::string scan_path("../ISBN_scan/scan_book.txt");
+    std::ifstream in_file(scan_path);
+    std::string line, isbn;
+    std::getline(in_file, line);
+    std::stringstream linestream(line);
+    std::getline(linestream, isbn, ',');
+
+    currentBook = std::stoi(isbn);
+    //-1:none;0:borrow;1:return;2:share
+    if(currentOperation == 2) {
+       // 如果为共享书籍，写入books
+       scanBooks("../datebase/books.txt");
+    } else if(currentOperation == 0) {
+       // 借书
+       BookInfo &scan_book = books[currentBook];
+       scan_book.inCloset = 0;
+    } else if(currentOperation == 1) {
+       BookInfo &scan_book = books[currentBook];
+       scan_book.inCloset = 1;
+       scan_book.frequency++;
+    }
+    toFaceModule();
 }
