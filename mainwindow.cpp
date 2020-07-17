@@ -193,6 +193,7 @@ void MainWindow::initCarousel()
 
 void MainWindow::scanBooks(QString file)
 {
+    qDebug()<<"scanBooks invoked!the file name:"<<file<<endl;
     char* ch;
     QByteArray ba = file.toLocal8Bit();
     ch = ba.data();
@@ -333,7 +334,7 @@ void MainWindow::readBookCoverImages()
 {
     std::vector<std::string> filename;
     std::vector<std::string> files;
-    char * filePath = ".\\database\\BookImages";
+    char * filePath = "../database/BookImages";
     getFiles(filePath,filename,files);
     char str[30];
     int size = filename.size();
@@ -360,7 +361,7 @@ void MainWindow::readBookCoverImages()
     bookCovers[-1]=img;
     //test
     qDebug()<<"test read cover images:"<<endl;
-    qDebug()<<"======================="<endl;
+    qDebug()<<"======================="<<endl;
     qDebug()<<"images count:"<<bookCovers.size()-1<<endl;
     QList<int> keys=bookCovers.keys();
     for(int i=0;i<bookCovers.size()-1;++i){
