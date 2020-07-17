@@ -90,29 +90,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::displayBooks(){
 
-    int id1=1,id2=1,id3=1;
-    if(top_books.size()==1)
-    {
+    int id1=-1,id2=-1,id3=-1;
+    if(top_books.size()>0){
         id1=top_books.at(0).ISBN;
     }
-    if(top_books.size()==2)
-    {
-        id1=top_books.at(0).ISBN;
+    if(top_books.size()>1){
         id2=top_books.at(1).ISBN;
     }
-    if(top_books.size()>=3)
-    {
-        id1=top_books.at(0).ISBN;
-        id2=top_books.at(1).ISBN;
+    if(top_books.size()>2){
         id3=top_books.at(2).ISBN;
     }
-    QString s1 = QString::number(id1);
-    QString s2 = QString::number(id2);
-    QString s3 = QString::number(id3);
-    QPixmap pix1,pix2,pix3;
-    pix1.load("../database/BookImages/"+s1+".jpg");
-    pix2.load("../database/BookImages/"+s2+".jpg");
-    pix3.load("../database/BookImages/"+s3+".jpg");
+//    QString s1 = QString::number(id1);
+//    QString s2 = QString::number(id2);
+//    QString s3 = QString::number(id3);
+//    QPixmap pix1,pix2,pix3;
+//    pix1.load("../database/BookImages/"+s1+".jpg");
+//    pix2.load("../database/BookImages/"+s2+".jpg");
+//    pix3.load("../database/BookImages/"+s3+".jpg");
+    QPixmap pix1=QPixmap::fromImage(bookCovers[id1]);
+    QPixmap pix2=QPixmap::fromImage(bookCovers[id2]);
+    QPixmap pix3=QPixmap::fromImage(bookCovers[id3]);
     ui->showbook1->setFixedWidth(this->width()/4);
     ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->width(),ui->showbook1->height(),Qt::KeepAspectRatio));
     ui->showbook2->setFixedWidth(this->width()/4);
@@ -123,7 +120,6 @@ void MainWindow::displayBooks(){
     ui->showbook1->setScaledContents(true);
     ui->showbook2->setScaledContents(true);
     ui->showbook3->setScaledContents(true);
-
 }
 
 void MainWindow::initPages()
@@ -343,7 +339,13 @@ void MainWindow::readBookCoverImages()
         image.loadFromData(pData);
         int id = atoi(str_temp.c_str());
         bookCovers.insert(id,image);
+        file->close();
+        delete file;
     }
+    //reading default book cover
+    QImage img;
+    img.load("../icons/default_book.jpg");
+    bookCovers[-1]=img;
 }
 
 void MainWindow::switchToPage(int page)
