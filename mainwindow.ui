@@ -33,7 +33,7 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="main">
        <layout class="QVBoxLayout" name="main_layout" stretch="2,3,3">
@@ -242,6 +242,58 @@ borrow_button:pressed{border-image: url(:/icons/borrow.png);}</string>
           <property name="title">
            <string>在库图书</string>
           </property>
+          <widget class="QLabel" name="showbook1">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>50</y>
+             <width>71</width>
+             <height>211</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="showbook2">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>50</y>
+             <width>71</width>
+             <height>211</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="showbook3">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>50</y>
+             <width>71</width>
+             <height>211</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="showbook4">
+           <property name="geometry">
+            <rect>
+             <x>420</x>
+             <y>50</y>
+             <width>71</width>
+             <height>211</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -485,7 +537,7 @@ border-radius:20px;}</string>
      <x>0</x>
      <y>0</y>
      <width>581</width>
-     <height>28</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
