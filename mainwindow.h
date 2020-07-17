@@ -145,6 +145,8 @@ public:
     void toBookInfo();
     //返回主页
     void backToMain();
+
+    void displayBooks();
     ~MainWindow();
 
 private slots:

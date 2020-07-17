@@ -84,6 +84,46 @@ MainWindow::MainWindow(QWidget *parent) :
     initProperties();
     startupTasks();
     toStuffInfo();
+
+    displayBooks();//byboss
+}
+
+void MainWindow::displayBooks(){
+
+    int id1=1,id2=1,id3=1;
+    if(top_books.size()==1)
+    {
+        id1=top_books.at(0).ISBN;
+    }
+    if(top_books.size()==2)
+    {
+        id1=top_books.at(0).ISBN;
+        id2=top_books.at(1).ISBN;
+    }
+    if(top_books.size()>=3)
+    {
+        id1=top_books.at(0).ISBN;
+        id2=top_books.at(1).ISBN;
+        id3=top_books.at(2).ISBN;
+    }
+    QString s1 = QString::number(id1);
+    QString s2 = QString::number(id2);
+    QString s3 = QString::number(id3);
+    QPixmap pix1,pix2,pix3;
+    pix1.load("../database/BookImages/"+s1+".jpg");
+    pix2.load("../database/BookImages/"+s2+".jpg");
+    pix3.load("../database/BookImages/"+s3+".jpg");
+    ui->showbook1->setFixedWidth(this->width()/4);
+    ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->width(),ui->showbook1->height(),Qt::KeepAspectRatio));
+    ui->showbook2->setFixedWidth(this->width()/4);
+    ui->showbook2->setPixmap(pix2.scaled(ui->showbook2->width(),ui->showbook2->height(),Qt::KeepAspectRatio));
+    ui->showbook3->setFixedWidth(this->width()/4);
+    ui->showbook3->setPixmap(pix3.scaled(ui->showbook3->width(),ui->showbook3->height(),Qt::KeepAspectRatio));
+    //缩放
+    ui->showbook1->setScaledContents(true);
+    ui->showbook2->setScaledContents(true);
+    ui->showbook3->setScaledContents(true);
+
 }
 
 void MainWindow::initPages()
