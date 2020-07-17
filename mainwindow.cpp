@@ -347,13 +347,22 @@ void MainWindow::toStuffInfo()
 {
     switchToPage(2);
     if(currentUser!=-1){
-
+        QPixmap pix;
+        pix.load("../database/faces/"+QString::number(currentUser)+".jpg");
+        ui->headLabel->setFixedSize(QSize(220,220));
+        float ratio=qMin(pix.width()/ui->headLabel->width(),pix.height()/ui->headLabel->height());
+        pix=pix.scaled(QSize(pix.width()/ratio,pix.height()/ratio));
+        pix=pix.copy(QRect((pix.width()-ui->headLabel->width())/2,0,ui->headLabel->width(),ui->headLabel->height()));
+        ui->headLabel->setPixmap(pix);
+        ui->nameEdit->setText(stuffs[currentUser].name);
+        ui->idEdit->setText(QString::number(stuffs[currentUser].id));
+        ui->quotaEdit->setText(QString::number(stuffs[currentUser].quota));
     }
     else{
         QPixmap pix;
         pix.load("../icons/unknown_person.png");
-        ui->headLabel->resize(ui->headWidget->size());
-        ui->headLabel->setPixmap(pix);
+        ui->headLabel->setFixedSize(QSize(220,220));
+        ui->headLabel->setPixmap(pix.scaled(ui->headLabel->size()));
         ui->nameEdit->setText("unknown");
         ui->idEdit->setText("-1");
         ui->quotaEdit->setText("0");
@@ -435,4 +444,21 @@ void Recognizing::run()
     else{//multi-face
         emit recognized(-2);
     }
+}
+
+void MainWindow::on_id_confirm_clicked()
+{
+    if(currentUser!=-1){
+        toBookModule();
+    }
+    else{
+        updateCountDown(0);
+        backToMain();
+    }
+}
+
+void MainWindow::on_id_cancel_clicked()
+{
+    updateCountDown(0);
+    backToMain();
 }
