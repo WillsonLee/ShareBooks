@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->share_button->setRadius(10);
     //init timer
     timer=NULL;
-    timeout=3;
+    timeout=9;
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
     scanBooks("../datebase/books.txt");
@@ -78,7 +78,7 @@ void MainWindow::saveBooksData()
 
 void MainWindow::readStuffInfo()
 {
-    std::string stuff_info_path("./database/stuffs.txt");
+    std::string stuff_info_path("../database/stuffs.txt");
     std::ifstream in_file(stuff_info_path);  // open file
     if(in_file) {
         std::string line;
@@ -106,7 +106,13 @@ void MainWindow::readStuffInfo()
     } else {
         std::cerr << "cann't open stuffs.txt!";
     }
-
+//    //test
+//    for(auto k:stuffs.keys()){
+//        qDebug()<<"id:"<<stuffs[k].id<<",name:"<<stuffs[k].name<<",quota:"<<stuffs[k].quota<<",and holds:";
+//        const QVector<int> &holds=stuffs[k].current_hold;
+//        for(int i=0;i<holds.size();++i)qDebug()<<holds[i]<<",";
+//    }
+//    //
 }
 
 void MainWindow::readBookCoverImages()
@@ -132,28 +138,26 @@ void MainWindow::toFaceModule()
     nameFilters << "*.jpg" << "*.jpeg" << "*.png";
     QFileInfoList imgs = dir.entryInfoList(nameFilters, QDir::Files|QDir::Readable, QDir::Name);
     if(imgs.size()==0){
-        qDebug()<<"no faces found"<<endl;
         ui->camera_label->setPixmap(QPixmap("../icons/no_cam.jpg"));
     }
     else if(imgs.size()==1){
         //read image to display
-        ui->camera_label->setPixmap(QPixmap(imgs[0].absolutePath()));
-        std::vector<int> faces=face_recognize("../database/faces/",dir.absolutePath().toStdString());
-        if(faces.size()==1){
-            if(faces[0]!=-1){//correctly recognized
-                qDebug()<<"stuff id:"<<faces[0]<<endl;
-            }
-            else{//unrecognized face
-                qDebug()<<"unrecognized face!"<<endl;
-            }
-        }
-        else{//multi-face
-            qDebug()<<"multi face detected!"<<endl;
-        }
+        ui->camera_label->setPixmap(QPixmap(imgs[0].absoluteFilePath()));
+//        std::vector<int> faces=face_recognize("../database/faces/",dir.absolutePath().toStdString());
+//        if(faces.size()==1){
+//            if(faces[0]!=-1){//correctly recognized
+//                qDebug()<<"stuff id:"<<faces[0]<<endl;
+//            }
+//            else{//unrecognized face
+//                qDebug()<<"unrecognized face!"<<endl;
+//            }
+//        }
+//        else{//multi-face
+//            qDebug()<<"multi face detected!"<<endl;
+//        }
     }
     else{
         ui->camera_label->setPixmap(QPixmap("../icons/no_cam.jpg"));
-        qDebug()<<"too much images!"<<endl;
     }
 }
 

@@ -292,7 +292,7 @@ borrow_button:pressed{border-image: url(:/icons/borrow.png);}</string>
          <widget class="QWidget" name="widget_2" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-            <widget class="QLabel" name="camera_label">
+            <widget class="MaskLabel" name="camera_label">
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -335,7 +335,7 @@ borrow_button:pressed{border-image: url(:/icons/borrow.png);}</string>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">QLabel{border:2px solid orange;
+              <string notr="true">QLabel#tip_label{border:2px solid orange;
 background:solid orange;
 border-radius:20px;}</string>
              </property>
@@ -394,6 +394,11 @@ border-radius:20px;}</string>
    <class>ImageButton</class>
    <extends>QPushButton</extends>
    <header>imagebutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MaskLabel</class>
+   <extends>QLabel</extends>
+   <header>masklabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

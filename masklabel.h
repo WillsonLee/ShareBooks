@@ -2,6 +2,7 @@
 #define MASKLABEL_H
 
 #include <QLabel>
+#include <QPixmap>
 
 class MaskLabel : public QLabel
 {
