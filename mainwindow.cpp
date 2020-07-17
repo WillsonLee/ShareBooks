@@ -6,11 +6,69 @@
 #include <QBitmap>
 #include <QPainter>
 #include <face_recognize.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stdio.h>
+
+/*
+函数：SplitString
+功能：实现字符逗号隔开
+*/
+void SplitString(const std::string& s, std::vector<std::string>& v, const std::string& c)
+{
+    std::string::size_type pos1, pos2;
+    pos2 = s.find(c);
+    pos1 = 0;
+    while(std::string::npos != pos2)
+    {
+        v.push_back(s.substr(pos1, pos2-pos1));
+
+        pos1 = pos2 + c.size();
+        pos2 = s.find(c, pos1);
+    }
+    if(pos1 != s.length())
+        v.push_back(s.substr(pos1));
+}
+//get all image files(*.jpg;*.jpeg;*.png;*.bmp) in the given folder
+//filename:the base name of the files without path or suffix
+//files:the full name of the files
+void getFiles(std::string path, std::vector<std::string>& filename, std::vector<std::string>& files )
+{
+//    long   hFile   =   0;
+//    struct _finddata_t fileinfo;
+//    std::string p;
+//    if((hFile = _findfirst(p.assign(path).append("\\*").c_str(),&fileinfo)) !=  -1)
+//    {
+//        do
+//        {
+//            if((fileinfo.attrib &  _A_SUBDIR))
+//            {
+//                if(strcmp(fileinfo.name,".") != 0  &&  strcmp(fileinfo.name,"..") != 0)
+//                    getFiles( p.assign(path).append("\\").append(fileinfo.name), filename ,files);
+//            }
+//            else
+//            {
+//                filename.push_back(p.assign(fileinfo.name));
+//                files.push_back(p.assign(path).append("\\").append(fileinfo.name) );
+//            }
+//        }while(_findnext(hFile, &fileinfo)  == 0);
+//        _findclose(hFile);
+//    }
+    QDir dir(QString::fromStdString(path));
+    QFileInfoList f_list=dir.entryInfoList(QStringList()<<"*.jpg"<<"*.jpeg"<<"*.png"<<"*.bmp");
+    for(int i=0;i<f_list.size();++i){
+        filename.push_back(f_list[i].baseName().toStdString());
+        files.push_back(f_list[i].absoluteFilePath().toStdString());
+    }
+    //test
+    qDebug()<<"test get all image files:"<<endl;
+    for(int i=0;i<filename.size();++i){
+        qDebug()<<"file base name:"<<QString::fromStdString(filename[i])<<",full name:"<<QString::fromStdString(files[i])<<endl;
+    }
+    //
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -68,12 +126,89 @@ void MainWindow::initCarousel()
 
 void MainWindow::scanBooks(QString file)
 {
+    char* ch;
+    QByteArray ba = file.toLocal8Bit();
+    ch = ba.data();
+    std::ifstream in(ch);
+    std::string linestr;
+    BookInfo bookinfo;
+    std::vector<std::string> stringtemp;
+    if(in){
+        while(getline(in,linestr)){
+            std::vector<std::string> ver;
+            SplitString(linestr, ver,",");
 
+            bookinfo.ISBN = atoi(ver[0].c_str());
+
+            QString qlinestr1=QString::fromStdString(ver[1]);
+            bookinfo.title = qlinestr1;
+
+            QString qlinestr2=QString::fromStdString(ver[2]);
+            bookinfo.author = qlinestr2;
+
+            bookinfo.year = atoi(ver[3].c_str());
+
+            QString qlinestr4=QString::fromStdString(ver[4]);
+            bookinfo.brief = qlinestr4;
+
+            if(ver[5] == ""){
+                QDateTime time = QDateTime::currentDateTime();
+                int timeT = time.toTime_t();
+                bookinfo.timeStamp = timeT;
+                bookinfo.frequency = 0;
+            }else {
+                bookinfo.timeStamp = atoi(ver[5].c_str());
+
+                bookinfo.frequency = atoi(ver[6].c_str());
+            }
+
+            bookinfo.inCloset = atoi(ver[7].c_str());
+            books.insert(bookinfo.ISBN,bookinfo);
+        }
+        top_books.put(bookinfo);
+    }
+    in.close();
 }
 
 void MainWindow::saveBooksData()
 {
+    std::ofstream f1("./database/books.txt", std::ios::app);
+    if(!f1)return;
+    QHash<int,BookInfo> books;
+    QHash<int,BookInfo> ::const_iterator it;
+    int i = 0;
+    for(it = books.begin();it != books.end();it++,i++){
+        switch (i) {
+        case 0:
+            f1<<std::to_string(it.value().ISBN)<<",";
+            break;
+        case 1:
+            f1<<it.value().title.toStdString()<<",";
+            break;
+        case 2:
+            f1<<it.value().author.toStdString()<<",";
+            break;
+        case 3:
+            f1<<std::to_string(it.value().year)<<",";
+            break;
+        case 4:
+            f1<<it.value().brief.toStdString()<<",";
+            break;
+        case 5:
+            f1<<std::to_string(it.value().timeStamp)<<",";
+            break;
+        case 6:
+            f1<<std::to_string(it.value().frequency)<<",";
+            break;
+        case 7:
+            f1<<std::to_string(it.value().inCloset)<<endl;
+            break;
+        default:
+            break;
+        }
 
+    }
+    f1.close();
 }
 
 void MainWindow::readStuffInfo()
@@ -117,7 +252,27 @@ void MainWindow::readStuffInfo()
 
 void MainWindow::readBookCoverImages()
 {
-
+    std::vector<std::string> filename;
+    std::vector<std::string> files;
+    char * filePath = ".\\database\\BookImages";
+    getFiles(filePath,filename,files);
+    char str[30];
+    int size = filename.size();
+    std::string	str_temp;
+    for (int i = 0;i < size;i++){
+        int pase = 0;
+        pase = filename[i].find(".");
+        str_temp = filename[i].substr(0,pase);
+        QImage image;
+        QByteArray pData;
+        QString path = QString::fromStdString(files[i]);
+        QFile *file=new QFile(path);
+        file->open(QIODevice::ReadOnly);
+        pData=file->readAll();
+        image.loadFromData(pData);
+        int id = atoi(str_temp.c_str());
+        bookCovers.insert(id,image);
+    }
 }
 
 void MainWindow::toFaceModule()
@@ -225,4 +380,9 @@ void MainWindow::updateCountDown(int time)
     else if(ui->stackedWidget->currentIndex()==3){
 
     }
+}
+
+void MainWindow::on_MainWindow_destroyed()
+{
+    saveBooksData();
 }

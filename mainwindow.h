@@ -138,6 +138,8 @@ private slots:
 
     void on_faceReturn_clicked();
 
+    void on_MainWindow_destroyed();
+
 private:
     Ui::MainWindow *ui;
     QHash<int,BookInfo> books;
