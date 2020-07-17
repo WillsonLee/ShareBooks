@@ -150,7 +150,7 @@ void MainWindow::initProperties()
     timer=NULL;
     timeout=16;
     //read book info from datebase
-    top_books=Cache<BookInfo>(10);
+    top_books=Cache<BookInfo>(6);
     //init current status of face recog and book info
     currentOperation=-1;
     currentUser=-1;
@@ -235,6 +235,18 @@ void MainWindow::scanBooks(QString file)
         top_books.put(bookinfo);
     }
     in.close();
+    //test
+    qDebug()<<"scan books test:"<<endl;
+    qDebug()<<"================"<<endl;
+    qDebug()<<"number of books:"<<books.size()<<endl;
+    qDebug()<<"number of top books:"<<top_books.size()<<endl;
+    qDebug()<<"top_book info:"<<endl;
+    for(int i=0;i<top_books.size();++i){
+        BookInfo bi=top_books.at(i);
+        qDebug()<<"ISBN-"<<bi.ISBN<<",title<<"<<bi.title<<">>,author:"<<bi.author<<",published in:"<<bi.year<<",time stamp:"<<bi.timeStamp<<",frequency:"<<bi.frequency<<endl;
+        qDebug()<<"brief discription:"<<bi.brief<<endl;
+    }
+    //
 }
 
 void MainWindow::saveBooksData()
@@ -346,6 +358,15 @@ void MainWindow::readBookCoverImages()
     QImage img;
     img.load("../icons/default_book.jpg");
     bookCovers[-1]=img;
+    //test
+    qDebug()<<"test read cover images:"<<endl;
+    qDebug()<<"======================="<endl;
+    qDebug()<<"images count:"<<bookCovers.size()-1<<endl;
+    QList<int> keys=bookCovers.keys();
+    for(int i=0;i<bookCovers.size()-1;++i){
+        qDebug()<<"image#"<<i<<",size=>"<<bookCovers[keys[i]].width()<<"x"<<bookCovers[keys[i]].height()<<endl;
+    }
+    //
 }
 
 void MainWindow::switchToPage(int page)
