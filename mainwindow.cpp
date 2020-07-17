@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->share_button->setRadius(10);
     //init timer
     timer=NULL;
-    timeout=9;
+    timeout=16;
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
     scanBooks("../datebase/books.txt");
@@ -108,10 +108,27 @@ MainWindow::MainWindow(QWidget *parent) :
     //read book cover image
     readBookCoverImages();
     //init current status of face recog and book info
+    currentOperation=-1;
     currentUser=-1;
     currentBook=-1;
     //init system command environment
     initFullPathCmd();
+    //init call back
+    connect(&recog,&QThread::finished,this,[&](){
+        ui->camera_label->stopSpinning();
+    });
+    connect(&recog,&Recognizing::recognized,this,[&](int result){
+        if(result==-2){
+            ui->tip_label->setText("请一次识别一个员工!");
+        }
+        else if(result==-1){
+            ui->tip_label->setText("员工不存在!");
+        }
+        else{
+            currentUser=result;
+            toStuffInfo();
+        }
+    });
 }
 
 void MainWindow::initCarousel()
@@ -275,9 +292,9 @@ void MainWindow::readBookCoverImages()
     }
 }
 
-void MainWindow::toFaceModule()
+void MainWindow::switchToPage(int page)
 {
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentIndex(page);
     if(timer&&timer->isActive()){
         timer->stop();
     }
@@ -287,6 +304,12 @@ void MainWindow::toFaceModule()
         backToMain();
     });
     timer->start(1000);
+}
+
+void MainWindow::toFaceModule()
+{
+    switchToPage(1);
+    ui->tip_label->setText("请进行面部识别");
     //face recognize code
     QDir dir("../face_cam");
     QStringList nameFilters;
@@ -298,36 +321,22 @@ void MainWindow::toFaceModule()
     else if(imgs.size()==1){
         //read image to display
         ui->camera_label->setPixmap(QPixmap(imgs[0].absoluteFilePath()));
-//        std::vector<int> faces=face_recognize("../database/faces/",dir.absolutePath().toStdString());
-//        if(faces.size()==1){
-//            if(faces[0]!=-1){//correctly recognized
-//                qDebug()<<"stuff id:"<<faces[0]<<endl;
-//            }
-//            else{//unrecognized face
-//                qDebug()<<"unrecognized face!"<<endl;
-//            }
-//        }
-//        else{//multi-face
-//            qDebug()<<"multi face detected!"<<endl;
-//        }
+        ui->camera_label->startSpinning();
+        recog.start();
     }
     else{
         ui->camera_label->setPixmap(QPixmap("../icons/no_cam.jpg"));
     }
 }
 
+void MainWindow::toStuffInfo()
+{
+    switchToPage(2);
+}
+
 void MainWindow::toBookModule()
 {
-    ui->stackedWidget->setCurrentIndex(3);
-    if(timer&&timer->isActive()){
-        timer->stop();
-    }
-    timer=new QTimer(this);
-    updateCountDown(timeout);
-    connect(timer,&QTimer::timeout,this,[&](){
-        backToMain();
-    });
-    timer->start(1000);
+    switchToPage(3);
 }
 
 void MainWindow::backToMain()
@@ -343,6 +352,9 @@ void MainWindow::backToMain()
     ui->stackedWidget->setCurrentIndex(0);
     currentUser=-1;
     currentBook=-1;
+    if(recog.isRunning()){
+        recog.terminate();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -373,8 +385,8 @@ void MainWindow::on_faceReturn_clicked()
 
 void MainWindow::updateCountDown(int time)
 {
+    count_down=time;
     if(ui->stackedWidget->currentIndex()==1){//in face recognition interface
-        count_down=time;
         ui->faceReturn->setText(QString("<|back(%1)").arg(count_down));
     }
     else if(ui->stackedWidget->currentIndex()==3){
@@ -382,7 +394,19 @@ void MainWindow::updateCountDown(int time)
     }
 }
 
-void MainWindow::on_MainWindow_destroyed()
+void MainWindow::closeEvent(QCloseEvent *event)
 {
+    qDebug()<<"closing..."<<endl;
     saveBooksData();
+}
+
+void Recognizing::run()
+{
+    std::vector<int> faces=face_recognize("../database/faces/","../face_cam");
+    if(faces.size()==1){
+        emit recognized(faces[0]);
+    }
+    else{//multi-face
+        emit recognized(-2);
+    }
 }

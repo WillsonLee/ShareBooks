@@ -8,6 +8,7 @@
 #include <QImage>
 #include <QTimer>
 #include <climits>
+#include <QThread>
 
 struct BookInfo{
     int ISBN;//use as book id
@@ -101,6 +102,17 @@ public:
     int size(){return data.size();}
 };
 
+class Recognizing:public QThread{
+    Q_OBJECT
+
+signals:
+    //id==-2:multi face;id==-1:unknown face;id>=0:id of stuff
+    void recognized(int id);
+    // QThread interface
+protected:
+    void run();
+};
+
 namespace Ui {
 class MainWindow;
 }
@@ -121,10 +133,13 @@ public:
     void readStuffInfo();
     //读取书籍封面信息
     void readBookCoverImages();
+    void switchToPage(int page);
     //跳转到人脸模块
     void toFaceModule();
+    void toStuffInfo();
     //跳转到书籍模块
     void toBookModule();
+    void toBookInfo();
     //返回主页
     void backToMain();
     ~MainWindow();
@@ -138,8 +153,6 @@ private slots:
 
     void on_faceReturn_clicked();
 
-    void on_MainWindow_destroyed();
-
 private:
     Ui::MainWindow *ui;
     QHash<int,BookInfo> books;
@@ -150,10 +163,16 @@ private:
     QTimer *timer;
     int timeout;//time duration after which return to main page(in seconds)
     int count_down;
+    int currentOperation;//-1:none;0:borrow;1:return;2:share
     int currentUser;
     int currentBook;
+    Recognizing recog;
     //count down
     void updateCountDown(int time);
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H
