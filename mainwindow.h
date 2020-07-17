@@ -123,6 +123,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void initPages();
+    void initProperties();
+    void startupTasks();
     //初始化轮播图片
     void initCarousel();
     //扫描书籍信息（扫描书库所有书籍或者获取扫描仪扫描的书籍信息）

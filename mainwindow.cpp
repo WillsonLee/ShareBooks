@@ -80,6 +80,14 @@ MainWindow::MainWindow(QWidget *parent) :
     setFixedSize(this->width(), this->height());
     //set current view at main page and init main page layout
     ui->stackedWidget->setCurrentIndex(0);
+    initPages();
+    initProperties();
+    startupTasks();
+    toStuffInfo();
+}
+
+void MainWindow::initPages()
+{
     //init carousel view
     initCarousel();
     //set buttons size and image
@@ -97,20 +105,29 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->return_button->setRadius(10);
     ui->share_button->setImage(QPixmap(":/icons/icons/share.png"));
     ui->share_button->setRadius(10);
+    //init identity confirmation page
+}
+
+void MainWindow::initProperties()
+{
     //init timer
     timer=NULL;
     timeout=16;
     //read book info from datebase
     top_books=Cache<BookInfo>(10);
+    //init current status of face recog and book info
+    currentOperation=-1;
+    currentUser=-1;
+    currentBook=-1;
+}
+
+void MainWindow::startupTasks()
+{
     scanBooks("../datebase/books.txt");
     //read pesonnel data
     readStuffInfo();
     //read book cover image
     readBookCoverImages();
-    //init current status of face recog and book info
-    currentOperation=-1;
-    currentUser=-1;
-    currentBook=-1;
     //init system command environment
     initFullPathCmd();
     //init call back
@@ -120,9 +137,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&recog,&Recognizing::recognized,this,[&](int result){
         if(result==-2){
             ui->tip_label->setText("请一次识别一个员工!");
-        }
-        else if(result==-1){
-            ui->tip_label->setText("员工不存在!");
         }
         else{
             currentUser=result;
@@ -332,6 +346,18 @@ void MainWindow::toFaceModule()
 void MainWindow::toStuffInfo()
 {
     switchToPage(2);
+    if(currentUser!=-1){
+
+    }
+    else{
+        QPixmap pix;
+        pix.load("../icons/unknown_person.png");
+        ui->headLabel->resize(ui->headWidget->size());
+        ui->headLabel->setPixmap(pix);
+        ui->nameEdit->setText("unknown");
+        ui->idEdit->setText("-1");
+        ui->quotaEdit->setText("0");
+    }
 }
 
 void MainWindow::toBookModule()
