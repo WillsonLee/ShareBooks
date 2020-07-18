@@ -250,43 +250,61 @@ void MainWindow::scanBooks(QString file,QHash<int,BookInfo> &results)
 
 void MainWindow::saveBooksData()
 {
-    std::ofstream f1("books.txt", std::ios::app);
-    if(!f1)return;
-    QHash<int,BookInfo> books;
-    QHash<int,BookInfo> ::const_iterator it;
-    int i = 0;
-    for(it = books.begin();it != books.end();it++,i++){
-        switch (i) {
-        case 0:
-            f1<<std::to_string(it.value().ISBN)<<",";
-            break;
-        case 1:
-            f1<<it.value().title.toStdString()<<",";
-            break;
-        case 2:
-            f1<<it.value().author.toStdString()<<",";
-            break;
-        case 3:
-            f1<<std::to_string(it.value().year)<<",";
-            break;
-        case 4:
-            f1<<it.value().brief.toStdString()<<",";
-            break;
-        case 5:
-            f1<<std::to_string(it.value().timeStamp)<<",";
-            break;
-        case 6:
-            f1<<std::to_string(it.value().frequency)<<",";
-            break;
-        case 7:
-            f1<<std::to_string(it.value().inCloset)<<endl;
-            break;
-        default:
-            break;
-        }
-
+    QString fileName="../database/books.txt";
+    QFileInfo fi(fileName);
+    if(fi.isFile()){
+        QString absName=fi.absoluteFilePath();
+        QString path=fi.absolutePath();
+        QString baseName=fi.baseName();
+        system(QString("cp "+absName+" "+path+"/"+baseName+".backup").toStdString().c_str());
     }
-    f1.close();
+    std::ofstream ofs(fileName.toStdString());
+    if(ofs){
+        QList<int> keys=books.keys();
+        for(int k:keys){
+            BookInfo bi=books[k];
+            ofs<<bi.ISBN<<","<<bi.title.toStdString()<<","<<bi.author.toStdString()<<","<<bi.year<<","
+              <<bi.brief.toStdString()<<","<<bi.timeStamp<<","<<bi.frequency<<","<<bi.inCloset<<std::endl;
+        }
+        ofs.close();
+    }
+//    std::ofstream f1("books.txt", std::ios::app);
+//    if(!f1)return;
+//    QHash<int,BookInfo> books;
+//    QHash<int,BookInfo> ::const_iterator it;
+//    int i = 0;
+//    for(it = books.begin();it != books.end();it++,i++){
+//        switch (i) {
+//        case 0:
+//            f1<<std::to_string(it.value().ISBN)<<",";
+//            break;
+//        case 1:
+//            f1<<it.value().title.toStdString()<<",";
+//            break;
+//        case 2:
+//            f1<<it.value().author.toStdString()<<",";
+//            break;
+//        case 3:
+//            f1<<std::to_string(it.value().year)<<",";
+//            break;
+//        case 4:
+//            f1<<it.value().brief.toStdString()<<",";
+//            break;
+//        case 5:
+//            f1<<std::to_string(it.value().timeStamp)<<",";
+//            break;
+//        case 6:
+//            f1<<std::to_string(it.value().frequency)<<",";
+//            break;
+//        case 7:
+//            f1<<std::to_string(it.value().inCloset)<<endl;
+//            break;
+//        default:
+//            break;
+//        }
+
+//    }
+//    f1.close();
 }
 
 void MainWindow::readStuffInfo()
