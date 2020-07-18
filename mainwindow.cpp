@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iostream>
 #include <stdio.h>
+#include <queue>
 
 /*
 函数：SplitString
@@ -62,12 +63,12 @@ void getFiles(std::string path, std::vector<std::string>& filename, std::vector<
         filename.push_back(f_list[i].baseName().toStdString());
         files.push_back(f_list[i].absoluteFilePath().toStdString());
     }
-    //test
-    qDebug()<<"test get all image files:"<<endl;
-    for(int i=0;i<filename.size();++i){
-        qDebug()<<"file base name:"<<QString::fromStdString(filename[i])<<",full name:"<<QString::fromStdString(files[i])<<endl;
-    }
-    //
+//    //test
+//    qDebug()<<"test get all image files:"<<endl;
+//    for(int i=0;i<filename.size();++i){
+//        qDebug()<<"file base name:"<<QString::fromStdString(filename[i])<<",full name:"<<QString::fromStdString(files[i])<<endl;
+//    }
+//    //
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -84,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initProperties();
     startupTasks();
 //    toStuffInfo();
+//    currentOperation=1;
+//    toBookModule();
 }
 
 void MainWindow::displayBooks(){
@@ -118,6 +121,13 @@ void MainWindow::displayBooks(){
     ui->showbook1->setScaledContents(true);
     ui->showbook2->setScaledContents(true);
     ui->showbook3->setScaledContents(true);
+    //test
+    qDebug()<<"test display book:"<<endl;
+    qDebug()<<"=================="<<endl;
+    qDebug()<<"top_books size:"<<top_books.size()<<endl;
+    qDebug()<<"size of pix1:"<<pix1.size()<<endl;
+    qDebug()<<"size of pix2:"<<pix2.size()<<endl;
+    qDebug()<<"size of pix3:"<<pix3.size()<<endl;
 }
 
 void MainWindow::initPages()
@@ -163,18 +173,18 @@ void MainWindow::startupTasks()
     for(int k:keys){
         top_books.put(books[k]);
     }
-    //test
-    qDebug()<<"scan books test:"<<endl;
-    qDebug()<<"================"<<endl;
-    qDebug()<<"number of books:"<<books.size()<<endl;
-    qDebug()<<"number of top books:"<<top_books.size()<<endl;
-    qDebug()<<"top_book info:"<<endl;
-    for(int i=0;i<top_books.size();++i){
-        BookInfo bi=top_books.at(i);
-        qDebug()<<"ISBN-"<<bi.ISBN<<",title<<"<<bi.title<<">>,author:"<<bi.author<<",published in:"<<bi.year<<",time stamp:"<<bi.timeStamp<<",frequency:"<<bi.frequency<<endl;
-        qDebug()<<"brief discription:"<<bi.brief<<endl;
-    }
-    //
+//    //test
+//    qDebug()<<"scan books test:"<<endl;
+//    qDebug()<<"================"<<endl;
+//    qDebug()<<"number of books:"<<books.size()<<endl;
+//    qDebug()<<"number of top books:"<<top_books.size()<<endl;
+//    qDebug()<<"top_book info:"<<endl;
+//    for(int i=0;i<top_books.size();++i){
+//        BookInfo bi=top_books.at(i);
+//        qDebug()<<"ISBN-"<<bi.ISBN<<",title<<"<<bi.title<<">>,author:"<<bi.author<<",published in:"<<bi.year<<",time stamp:"<<bi.timeStamp<<",frequency:"<<bi.frequency<<endl;
+//        qDebug()<<"brief discription:"<<bi.brief<<endl;
+//    }
+//    //
     //read pesonnel data
     readStuffInfo();
     //read book cover image
@@ -261,7 +271,13 @@ void MainWindow::saveBooksData()
     std::ofstream ofs(fileName.toStdString());
     if(ofs){
         QList<int> keys=books.keys();
+        std::priority_queue<int> kpq;
         for(int k:keys){
+            kpq.push(k);
+        }
+        while(kpq.size()>0){
+            int k=kpq.top();
+            kpq.pop();
             BookInfo bi=books[k];
             ofs<<bi.ISBN<<","<<bi.title.toStdString()<<","<<bi.author.toStdString()<<","<<bi.year<<","
               <<bi.brief.toStdString()<<","<<bi.timeStamp<<","<<bi.frequency<<","<<bi.inCloset<<std::endl;
@@ -337,15 +353,15 @@ void MainWindow::readStuffInfo()
     } else {
         std::cerr << "cann't open stuffs.txt!";
     }
-    //test
-    qDebug()<<"read stuff info test:"<<endl;
-    qDebug()<<"====================="<<endl;
-    for(auto k:stuffs.keys()){
-        qDebug()<<"id:"<<stuffs[k].id<<",name:"<<stuffs[k].name<<",quota:"<<stuffs[k].quota<<",and holds:";
-        const QVector<int> &holds=stuffs[k].current_hold;
-        for(int i=0;i<holds.size();++i)qDebug()<<holds[i]<<",";
-    }
-    //
+//    //test
+//    qDebug()<<"read stuff info test:"<<endl;
+//    qDebug()<<"====================="<<endl;
+//    for(auto k:stuffs.keys()){
+//        qDebug()<<"id:"<<stuffs[k].id<<",name:"<<stuffs[k].name<<",quota:"<<stuffs[k].quota<<",and holds:";
+//        const QVector<int> &holds=stuffs[k].current_hold;
+//        for(int i=0;i<holds.size();++i)qDebug()<<holds[i]<<",";
+//    }
+//    //
 }
 
 void MainWindow::readBookCoverImages()
@@ -377,15 +393,15 @@ void MainWindow::readBookCoverImages()
     QImage img;
     img.load("../icons/default_book.jpg");
     bookCovers[-1]=img;
-    //test
-    qDebug()<<"test read cover images:"<<endl;
-    qDebug()<<"======================="<<endl;
-    qDebug()<<"images count:"<<bookCovers.size()-1<<endl;
-    QList<int> keys=bookCovers.keys();
-    for(int i=0;i<bookCovers.size()-1;++i){
-        qDebug()<<"image#"<<i<<",size=>"<<bookCovers[keys[i]].width()<<"x"<<bookCovers[keys[i]].height()<<endl;
-    }
-    //
+//    //test
+//    qDebug()<<"test read cover images:"<<endl;
+//    qDebug()<<"======================="<<endl;
+//    qDebug()<<"images count:"<<bookCovers.size()-1<<endl;
+//    QList<int> keys=bookCovers.keys();
+//    for(int i=0;i<bookCovers.size()-1;++i){
+//        qDebug()<<"image#"<<i<<",size=>"<<bookCovers[keys[i]].width()<<"x"<<bookCovers[keys[i]].height()<<endl;
+//    }
+//    //
 }
 
 void MainWindow::switchToPage(int page)
@@ -460,7 +476,7 @@ void MainWindow::toBookModule()
     std::string load_path = "../icons/" + opImgs[currentOperation+1];
 
     QPixmap pix;
-    pix.load(load_path.c_str());
+    pix.load(QString::fromStdString(load_path));
     ui->operation_image->setPixmap(pix);
     if(currentOperation == 0){
         ui->Finish_Op_button->setText("我已取到书，并且关好柜门");
