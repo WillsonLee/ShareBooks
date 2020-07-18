@@ -87,32 +87,51 @@ MainWindow::MainWindow(QWidget *parent) :
 //    toStuffInfo();
 //    currentOperation=0;
 //    toBookModule();
+//    currentUser=1007;
+//    toStuffInfo();
 }
 
 void MainWindow::displayBooks(){
+    if(libraryView){
+        delete libraryView;
+    }
+    libraryView=new QHBoxLayout();
+    ui->libraryScroll->setLayout(libraryView);
+    int w=this->width()/4.5;
+    int h=w*1.4;
+    for(int i=0;i<top_books.size();++i){
+        QPixmap pix=bookCovers[top_books.at(i).ISBN];
+        QLabel *label=new QLabel();
+        label->setFixedSize(QSize(w,h));
+        label->setPixmap(pix.scaled(QSize(w,h)));
+        libraryView->addWidget(label);
+    }
+//    int id1=-1,id2=-1,id3=-1,id4=-1;
+//    if(top_books.size()>0){
+//        id1=top_books.at(0).ISBN;
+//    }
+//    if(top_books.size()>1){
+//        id2=top_books.at(1).ISBN;
+//    }
+//    if(top_books.size()>2){
+//        id3=top_books.at(2).ISBN;
+//    }
+//    if(top_books.size()>3){
+//        id4=top_books.at(3).ISBN;
+//    }
+//    QPixmap pix1=bookCovers[id1];
+//    QPixmap pix2=bookCovers[id2];
+//    QPixmap pix3=bookCovers[id3];
+//    QPixmap pix4=bookCovers[id4];
 
-    int id1=-1,id2=-1,id3=-1;
-    if(top_books.size()>0){
-        id1=top_books.at(0).ISBN;
-    }
-    if(top_books.size()>1){
-        id2=top_books.at(1).ISBN;
-    }
-    if(top_books.size()>2){
-        id3=top_books.at(2).ISBN;
-    }
-    QPixmap pix1=bookCovers[id1];
-    QPixmap pix2=bookCovers[id2];
-    QPixmap pix3=bookCovers[id3];
-    ui->showbook1->setFixedWidth(this->width()/4);
-    ui->showbook1->setFixedHeight(this->width()/4*1.4);
-    ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->size()));
-    ui->showbook2->setFixedWidth(this->width()/4);
-    ui->showbook2->setFixedHeight(this->width()/4*1.4);
-    ui->showbook2->setPixmap(pix2.scaled(ui->showbook2->size()));
-    ui->showbook3->setFixedWidth(this->width()/4);
-    ui->showbook3->setFixedHeight(this->width()/4*1.4);
-    ui->showbook3->setPixmap(pix3.scaled(ui->showbook3->size()));
+//    ui->showbook1->setFixedSize(QSize(w,h));
+//    ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->size()));
+//    ui->showbook2->setFixedSize(QSize(w,h));
+//    ui->showbook2->setPixmap(pix2.scaled(ui->showbook2->size()));
+//    ui->showbook3->setFixedSize(QSize(w,h));
+//    ui->showbook3->setPixmap(pix3.scaled(ui->showbook3->size()));
+//    ui->showbook4->setFixedSize(QSize(w,h));
+//    ui->showbook4->setPixmap(pix4.scaled(ui->showbook4->size()));
     //缩放
 //    ui->showbook1->setScaledContents(true);
 //    ui->showbook2->setScaledContents(true);
@@ -153,11 +172,13 @@ void MainWindow::initProperties()
     timer=NULL;
     timeout=16;
     //read book info from datebase
-    top_books=Cache<BookInfo>(6);
+    top_books=Cache<BookInfo>(10);
     //init current status of face recog and book info
     currentOperation=-1;
     currentUser=-1;
     currentBook=-1;
+    stuffHoldsView=NULL;
+    libraryView=NULL;
 }
 
 void MainWindow::startupTasks()
@@ -455,9 +476,37 @@ void MainWindow::toStuffInfo()
         pix=pix.scaled(QSize(pix.width()/ratio,pix.height()/ratio));
         pix=pix.copy(QRect((pix.width()-ui->headLabel->width())/2,0,ui->headLabel->width(),ui->headLabel->height()));
         ui->headLabel->setPixmap(pix);
-        ui->nameEdit->setText(stuffs[currentUser].name);
-        ui->idEdit->setText(QString::number(stuffs[currentUser].id));
-        ui->quotaEdit->setText(QString::number(stuffs[currentUser].quota));
+        StuffInfo st=stuffs[currentUser];
+        ui->nameEdit->setText(st.name);
+        ui->idEdit->setText(QString::number(st.id));
+        QVector<int> hold_books=st.current_hold;
+        QString quota_text=QString::number(hold_books.size())+"/"+QString::number(st.quota);
+        if(hold_books.size()==st.quota){
+            quota_text+="(额度用尽)";
+        }
+        ui->quotaEdit->setText(quota_text);
+        //arrange books view of user current hold
+        if(stuffHoldsView){
+            delete stuffHoldsView;
+        }
+        stuffHoldsView=new QHBoxLayout();
+        ui->scrollAreaWidgetContents->setLayout(stuffHoldsView);
+        ui->scrollAreaWidgetContents->resize(20,ui->scrollAreaWidgetContents->height());
+        int *left=new int();
+        int *right=new int();
+        int *top=new int();
+        int *bot=new int();
+        stuffHoldsView->getContentsMargins(left,top,right,bot);
+        int book_height=ui->stuffHoldsScroll->height()-*top-*bot;
+        int book_width=book_height/1.4;
+        delete top,bot,left,right;
+        for(int i=0;i<hold_books.size();++i){
+            QPixmap pix=bookCovers[hold_books[i]];
+            QLabel *label=new QLabel();
+            label->setPixmap(pix.scaled(QSize(book_width,book_height)));
+            stuffHoldsView->addWidget(label);
+            ui->scrollAreaWidgetContents->resize(ui->scrollAreaWidgetContents->width()+label->width(),ui->scrollAreaWidgetContents->height());
+        }
     }
     else{
         QPixmap pix;
@@ -572,7 +621,8 @@ void Recognizing::run()
 
 void MainWindow::on_id_confirm_clicked()
 {
-    if(currentUser!=-1){
+    StuffInfo st=stuffs[currentUser];
+    if(currentUser!=-1&&st.current_hold.size()<st.quota){
         toBookModule();
     }
     else{

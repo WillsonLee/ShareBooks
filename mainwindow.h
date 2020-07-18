@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <climits>
 #include <QThread>
+#include <QHBoxLayout>
 
 struct BookInfo{
     int ISBN;//use as book id
@@ -178,6 +179,8 @@ private:
     int currentUser;
     int currentBook;
     Recognizing recog;
+    QHBoxLayout *stuffHoldsView;//books that stuff holds
+    QHBoxLayout *libraryView;
     //count down
     void updateCountDown(int time);
 
