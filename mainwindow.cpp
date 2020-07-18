@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initProperties();
     startupTasks();
 //    toStuffInfo();
-    currentOperation=0;
-    toBookModule();
+//    currentOperation=0;
+//    toBookModule();
 }
 
 void MainWindow::displayBooks(){
@@ -101,26 +101,22 @@ void MainWindow::displayBooks(){
     if(top_books.size()>2){
         id3=top_books.at(2).ISBN;
     }
-//    QString s1 = QString::number(id1);
-//    QString s2 = QString::number(id2);
-//    QString s3 = QString::number(id3);
-//    QPixmap pix1,pix2,pix3;
-//    pix1.load("../database/BookImages/"+s1+".jpg");
-//    pix2.load("../database/BookImages/"+s2+".jpg");
-//    pix3.load("../database/BookImages/"+s3+".jpg");
     QPixmap pix1=bookCovers[id1];
     QPixmap pix2=bookCovers[id2];
     QPixmap pix3=bookCovers[id3];
     ui->showbook1->setFixedWidth(this->width()/4);
-    ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->width(),ui->showbook1->height(),Qt::KeepAspectRatio));
+    ui->showbook1->setFixedHeight(this->width()/4*1.4);
+    ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->size()));
     ui->showbook2->setFixedWidth(this->width()/4);
-    ui->showbook2->setPixmap(pix2.scaled(ui->showbook2->width(),ui->showbook2->height(),Qt::KeepAspectRatio));
+    ui->showbook2->setFixedHeight(this->width()/4*1.4);
+    ui->showbook2->setPixmap(pix2.scaled(ui->showbook2->size()));
     ui->showbook3->setFixedWidth(this->width()/4);
-    ui->showbook3->setPixmap(pix3.scaled(ui->showbook3->width(),ui->showbook3->height(),Qt::KeepAspectRatio));
+    ui->showbook3->setFixedHeight(this->width()/4*1.4);
+    ui->showbook3->setPixmap(pix3.scaled(ui->showbook3->size()));
     //缩放
-    ui->showbook1->setScaledContents(true);
-    ui->showbook2->setScaledContents(true);
-    ui->showbook3->setScaledContents(true);
+//    ui->showbook1->setScaledContents(true);
+//    ui->showbook2->setScaledContents(true);
+//    ui->showbook3->setScaledContents(true);
 //    //test
 //    qDebug()<<"test display book:"<<endl;
 //    qDebug()<<"=================="<<endl;
@@ -388,14 +384,13 @@ void MainWindow::readBookCoverImages()
 //        file->close();
 //        delete file;
 //    }
-    QDir dir("../database/BookImages");
-    QStringList f_list=dir.entryList(QStringList()<<"*.jpg"<<"*.jpeg"<<"*.png"<<"*.bmp");
-    for(int i=0;i<f_list.size();++i){
-        int id=QFileInfo(f_list[i]).baseName().toInt();
+    std::vector<std::string> baseNames,fullNames;
+    getFiles("../database/BookImages",baseNames,fullNames);
+    for(int i=0;i<baseNames.size();++i){
+        int id=stoi(baseNames[i]);
         QPixmap pix;
-        pix.load(dir.absolutePath()+"/"+f_list[i]);
+        pix.load(QString::fromStdString(fullNames[i]));
         bookCovers.insert(id,pix);
-//        qDebug()<<"book id:"<<id<<",full path name:"<<f_list[i]<<",size:"<<pix.size()<<endl;
     }
     //reading default book cover
     QPixmap img;
@@ -552,7 +547,15 @@ void MainWindow::updateCountDown(int time)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    qDebug()<<"closing..."<<endl;
+//    qDebug()<<"closing..."<<endl;
+    if(timer&&timer->isActive()){
+        timer->stop();
+        delete timer;
+        timer=NULL;
+    }
+    if(recog.isRunning()){
+        recog.terminate();
+    }
     saveBooksData();
 }
 
