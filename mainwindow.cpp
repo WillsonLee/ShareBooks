@@ -87,8 +87,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    toStuffInfo();
 //    currentOperation=0;
 //    toBookModule();
+//    currentOperation=2;
 //    currentUser=1007;
-//    toStuffInfo();
+//    toBookModule();
 }
 
 void MainWindow::displayBooks(){
@@ -104,6 +105,7 @@ void MainWindow::displayBooks(){
         QLabel *label=new QLabel();
         label->setFixedSize(QSize(w,h));
         label->setPixmap(pix.scaled(QSize(w,h)));
+        label->setStyleSheet("QLabel{border:1px solid gray;}");
         libraryView->addWidget(label);
     }
 //    int id1=-1,id2=-1,id3=-1,id4=-1;
@@ -529,6 +531,10 @@ void MainWindow::toBookModule()
 
     QPixmap pix;
     pix.load(QString::fromStdString(load_path));
+    int w=this->width()*0.8;
+    int h=this->height()*0.7;
+    pix=pix.scaled(QSize(w,h));
+    ui->operation_image->setAlignment(Qt::AlignCenter);
     ui->operation_image->setPixmap(pix);
     if(currentOperation == 0){
         ui->Finish_Op_button->setText("我已取到书，并且关好柜门");
@@ -537,6 +543,11 @@ void MainWindow::toBookModule()
     } else if(currentOperation == 2){
         ui->Finish_Op_button->setText("确认共享");
     }
+}
+
+void MainWindow::toBookInfo()
+{
+    switchToPage(4);
 }
 
 void MainWindow::backToMain()
@@ -564,16 +575,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_borrow_button_clicked()
 {
+    currentOperation=0;
     toFaceModule();
 }
 
 void MainWindow::on_return_button_clicked()
 {
+    currentOperation=1;
     toFaceModule();
 }
 
 void MainWindow::on_share_button_clicked()
 {
+    currentOperation=2;
     toFaceModule();
 }
 
@@ -639,34 +653,38 @@ void MainWindow::on_id_cancel_clicked()
 
 void MainWindow::on_Finish_Op_button_clicked()
 {
-      // Get the ISNB number of the scanned book from the file in ISBN_scan folder
-       std::string scan_path("../ISBN_scan/scan_book.txt");
-       std::ifstream in_file(scan_path);
-       std::string line, isbn;
-       std::getline(in_file, line);
-       std::stringstream linestream(line);
-       std::getline(linestream, isbn, ',');
+    // Get the ISNB number of the scanned book from the file in ISBN_scan folder
+    std::string scan_path("../ISBN_scan/scan_book.txt");
+    std::ifstream in_file(scan_path);
+    std::string line, isbn;
+    std::getline(in_file, line);
+    std::stringstream linestream(line);
+    std::getline(linestream, isbn, ',');
 
-       currentBook = std::stoi(isbn);
-       //-1:none;0:borrow;1:return;2:share
-       if(currentOperation == 2) {
-          // 如果为共享书籍，写入books
-          QHash<int,BookInfo> tmp;
-          scanBooks("../ISBN_scan/scan_book.txt", tmp);
-          books.insert(currentBook, tmp[currentBook]);
-          top_books.put(tmp[currentBook]);
-       } else if(currentOperation == 0) {
-          // 借书
-          BookInfo &scan_book = books[currentBook];
-          scan_book.inCloset = 0;
-       } else if(currentOperation == 1) {
-           // 还书
-           BookInfo &scan_book = books[currentBook];
-           scan_book.inCloset = 1;
-           scan_book.frequency++;
+    try{
+        currentBook = std::stoi(isbn);
+    }catch(std::invalid_argument ia){
+        currentBook = -1;//non-exist book,scan failed
+    }
+    //-1:none;0:borrow;1:return;2:share
+    if(currentBook!=-1 && currentOperation == 2) {
+        // 如果为共享书籍，写入books
+        QHash<int,BookInfo> tmp;
+        scanBooks("../ISBN_scan/scan_book.txt", tmp);
+        books.insert(currentBook, tmp[currentBook]);
+        top_books.put(tmp[currentBook]);
+    } else if(currentBook!=-1 && currentOperation == 0) {
+        // 借书
+        BookInfo &scan_book = books[currentBook];
+        scan_book.inCloset = 0;
+    } else if(currentBook!=-1 && currentOperation == 1) {
+        // 还书
+        BookInfo &scan_book = books[currentBook];
+        scan_book.inCloset = 1;
+        scan_book.frequency++;
 
-           top_books.put(scan_book);
-           displayBooks();
-       }
-       toFaceModule();
+        top_books.put(scan_book);
+        displayBooks();
+    }
+    toBookInfo();
 }
