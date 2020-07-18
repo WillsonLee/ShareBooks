@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initProperties();
     startupTasks();
 //    toStuffInfo();
-//    currentOperation=1;
-//    toBookModule();
+    currentOperation=0;
+    toBookModule();
 }
 
 void MainWindow::displayBooks(){
@@ -108,9 +108,9 @@ void MainWindow::displayBooks(){
 //    pix1.load("../database/BookImages/"+s1+".jpg");
 //    pix2.load("../database/BookImages/"+s2+".jpg");
 //    pix3.load("../database/BookImages/"+s3+".jpg");
-    QPixmap pix1=QPixmap::fromImage(bookCovers[id1]);
-    QPixmap pix2=QPixmap::fromImage(bookCovers[id2]);
-    QPixmap pix3=QPixmap::fromImage(bookCovers[id3]);
+    QPixmap pix1=bookCovers[id1];
+    QPixmap pix2=bookCovers[id2];
+    QPixmap pix3=bookCovers[id3];
     ui->showbook1->setFixedWidth(this->width()/4);
     ui->showbook1->setPixmap(pix1.scaled(ui->showbook1->width(),ui->showbook1->height(),Qt::KeepAspectRatio));
     ui->showbook2->setFixedWidth(this->width()/4);
@@ -121,13 +121,13 @@ void MainWindow::displayBooks(){
     ui->showbook1->setScaledContents(true);
     ui->showbook2->setScaledContents(true);
     ui->showbook3->setScaledContents(true);
-    //test
-    qDebug()<<"test display book:"<<endl;
-    qDebug()<<"=================="<<endl;
-    qDebug()<<"top_books size:"<<top_books.size()<<endl;
-    qDebug()<<"size of pix1:"<<pix1.size()<<endl;
-    qDebug()<<"size of pix2:"<<pix2.size()<<endl;
-    qDebug()<<"size of pix3:"<<pix3.size()<<endl;
+//    //test
+//    qDebug()<<"test display book:"<<endl;
+//    qDebug()<<"=================="<<endl;
+//    qDebug()<<"top_books size:"<<top_books.size()<<endl;
+//    qDebug()<<"size of pix1:"<<pix1.size()<<endl;
+//    qDebug()<<"size of pix2:"<<pix2.size()<<endl;
+//    qDebug()<<"size of pix3:"<<pix3.size()<<endl;
 }
 
 void MainWindow::initPages()
@@ -149,8 +149,6 @@ void MainWindow::initPages()
     ui->return_button->setRadius(10);
     ui->share_button->setImage(QPixmap(":/icons/icons/share.png"));
     ui->share_button->setRadius(10);
-    //init book display
-    displayBooks();//byboss
 }
 
 void MainWindow::initProperties()
@@ -204,6 +202,7 @@ void MainWindow::startupTasks()
             toStuffInfo();
         }
     });
+    displayBooks();//byboss
 }
 
 void MainWindow::initCarousel()
@@ -366,31 +365,40 @@ void MainWindow::readStuffInfo()
 
 void MainWindow::readBookCoverImages()
 {
-    std::vector<std::string> filename;
-    std::vector<std::string> files;
-    char * filePath = "../database/BookImages";
-    getFiles(filePath,filename,files);
-    char str[30];
-    int size = filename.size();
-    std::string	str_temp;
-    for (int i = 0;i < size;i++){
-        int pase = 0;
-        pase = filename[i].find(".");
-        str_temp = filename[i].substr(0,pase);
-        QImage image;
-        QByteArray pData;
-        QString path = QString::fromStdString(files[i]);
-        QFile *file=new QFile(path);
-        file->open(QIODevice::ReadOnly);
-        pData=file->readAll();
-        image.loadFromData(pData);
-        int id = atoi(str_temp.c_str());
-        bookCovers.insert(id,image);
-        file->close();
-        delete file;
+//    std::vector<std::string> filename;
+//    std::vector<std::string> files;
+//    char * filePath = "../database/BookImages";
+//    getFiles(filePath,filename,files);
+//    char str[30];
+//    int size = filename.size();
+//    std::string	str_temp;
+//    for (int i = 0;i < size;i++){
+//        int pase = 0;
+//        pase = filename[i].find(".");
+//        str_temp = filename[i].substr(0,pase);
+//        QImage image;
+//        QByteArray pData;
+//        QString path = QString::fromStdString(files[i]);
+//        QFile *file=new QFile(path);
+//        file->open(QIODevice::ReadOnly);
+//        pData=file->readAll();
+//        image.loadFromData(pData);
+//        int id = atoi(str_temp.c_str());
+//        bookCovers.insert(id,image);
+//        file->close();
+//        delete file;
+//    }
+    QDir dir("../database/BookImages");
+    QStringList f_list=dir.entryList(QStringList()<<"*.jpg"<<"*.jpeg"<<"*.png"<<"*.bmp");
+    for(int i=0;i<f_list.size();++i){
+        int id=QFileInfo(f_list[i]).baseName().toInt();
+        QPixmap pix;
+        pix.load(dir.absolutePath()+"/"+f_list[i]);
+        bookCovers.insert(id,pix);
+//        qDebug()<<"book id:"<<id<<",full path name:"<<f_list[i]<<",size:"<<pix.size()<<endl;
     }
     //reading default book cover
-    QImage img;
+    QPixmap img;
     img.load("../icons/default_book.jpg");
     bookCovers[-1]=img;
 //    //test
@@ -399,7 +407,7 @@ void MainWindow::readBookCoverImages()
 //    qDebug()<<"images count:"<<bookCovers.size()-1<<endl;
 //    QList<int> keys=bookCovers.keys();
 //    for(int i=0;i<bookCovers.size()-1;++i){
-//        qDebug()<<"image#"<<i<<",size=>"<<bookCovers[keys[i]].width()<<"x"<<bookCovers[keys[i]].height()<<endl;
+//        qDebug()<<"image#"<<keys[i]<<",size=>"<<bookCovers[keys[i]].width()<<"x"<<bookCovers[keys[i]].height()<<endl;
 //    }
 //    //
 }

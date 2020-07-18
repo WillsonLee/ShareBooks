@@ -170,7 +170,7 @@ private:
     Cache<BookInfo> top_books;
     QHash<int,StuffInfo> stuffs;
     QHash<int,QVector<QImage> > faces;
-    QHash<int,QImage> bookCovers;
+    QHash<int,QPixmap> bookCovers;
     QTimer *timer;
     int timeout;//time duration after which return to main page(in seconds)
     int count_down;
