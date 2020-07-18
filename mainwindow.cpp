@@ -159,7 +159,23 @@ void MainWindow::initProperties()
 
 void MainWindow::startupTasks()
 {
-    scanBooks("../datebase/books.txt");
+    scanBooks("../database/books.txt",books);
+    QList<int> keys=books.keys();
+    for(int k:keys){
+        top_books.put(books[k]);
+    }
+    //test
+    qDebug()<<"scan books test:"<<endl;
+    qDebug()<<"================"<<endl;
+    qDebug()<<"number of books:"<<books.size()<<endl;
+    qDebug()<<"number of top books:"<<top_books.size()<<endl;
+    qDebug()<<"top_book info:"<<endl;
+    for(int i=0;i<top_books.size();++i){
+        BookInfo bi=top_books.at(i);
+        qDebug()<<"ISBN-"<<bi.ISBN<<",title<<"<<bi.title<<">>,author:"<<bi.author<<",published in:"<<bi.year<<",time stamp:"<<bi.timeStamp<<",frequency:"<<bi.frequency<<endl;
+        qDebug()<<"brief discription:"<<bi.brief<<endl;
+    }
+    //
     //read pesonnel data
     readStuffInfo();
     //read book cover image
@@ -191,18 +207,14 @@ void MainWindow::initCarousel()
     ui->adsView->startPlay();
 }
 
-void MainWindow::scanBooks(QString file)
+void MainWindow::scanBooks(QString file,QHash<int,BookInfo> &results)
 {
-    qDebug()<<"scanBooks invoked!the file name:"<<file<<endl;
-    char* ch;
-    QByteArray ba = file.toLocal8Bit();
-    ch = ba.data();
-    std::ifstream in(ch);
+    file=QDir(file).absolutePath();
+    std::ifstream in(file.toStdString());
     std::string linestr;
     BookInfo bookinfo;
-    std::vector<std::string> stringtemp;
     if(in){
-        while(getline(in,linestr)){
+        while(std::getline(in,linestr)){
             std::vector<std::string> ver;
             SplitString(linestr, ver,",");
 
@@ -231,28 +243,15 @@ void MainWindow::scanBooks(QString file)
             }
 
             bookinfo.inCloset = atoi(ver[7].c_str());
-            books.insert(bookinfo.ISBN,bookinfo);
+            results.insert(bookinfo.ISBN,bookinfo);
         }
-        top_books.put(bookinfo);
     }
     in.close();
-    //test
-    qDebug()<<"scan books test:"<<endl;
-    qDebug()<<"================"<<endl;
-    qDebug()<<"number of books:"<<books.size()<<endl;
-    qDebug()<<"number of top books:"<<top_books.size()<<endl;
-    qDebug()<<"top_book info:"<<endl;
-    for(int i=0;i<top_books.size();++i){
-        BookInfo bi=top_books.at(i);
-        qDebug()<<"ISBN-"<<bi.ISBN<<",title<<"<<bi.title<<">>,author:"<<bi.author<<",published in:"<<bi.year<<",time stamp:"<<bi.timeStamp<<",frequency:"<<bi.frequency<<endl;
-        qDebug()<<"brief discription:"<<bi.brief<<endl;
-    }
-    //
 }
 
 void MainWindow::saveBooksData()
 {
-    std::ofstream f1("./database/books.txt", std::ios::app);
+    std::ofstream f1("books.txt", std::ios::app);
     if(!f1)return;
     QHash<int,BookInfo> books;
     QHash<int,BookInfo> ::const_iterator it;
@@ -321,13 +320,15 @@ void MainWindow::readStuffInfo()
     } else {
         std::cerr << "cann't open stuffs.txt!";
     }
-//    //test
-//    for(auto k:stuffs.keys()){
-//        qDebug()<<"id:"<<stuffs[k].id<<",name:"<<stuffs[k].name<<",quota:"<<stuffs[k].quota<<",and holds:";
-//        const QVector<int> &holds=stuffs[k].current_hold;
-//        for(int i=0;i<holds.size();++i)qDebug()<<holds[i]<<",";
-//    }
-//    //
+    //test
+    qDebug()<<"read stuff info test:"<<endl;
+    qDebug()<<"====================="<<endl;
+    for(auto k:stuffs.keys()){
+        qDebug()<<"id:"<<stuffs[k].id<<",name:"<<stuffs[k].name<<",quota:"<<stuffs[k].quota<<",and holds:";
+        const QVector<int> &holds=stuffs[k].current_hold;
+        for(int i=0;i<holds.size();++i)qDebug()<<holds[i]<<",";
+    }
+    //
 }
 
 void MainWindow::readBookCoverImages()
@@ -548,7 +549,7 @@ void MainWindow::on_Finish_Op_button_clicked()
     //-1:none;0:borrow;1:return;2:share
     if(currentOperation == 2) {
        // 如果为共享书籍，写入books
-       scanBooks("../datebase/books.txt");
+//       scanBooks("../datebase/books.txt");
     } else if(currentOperation == 0) {
        // 借书
        BookInfo &scan_book = books[currentBook];

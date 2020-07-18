@@ -129,7 +129,7 @@ public:
     //初始化轮播图片
     void initCarousel();
     //扫描书籍信息（扫描书库所有书籍或者获取扫描仪扫描的书籍信息）
-    void scanBooks(QString file);
+    void scanBooks(QString file, QHash<int, BookInfo> &results);
     //保存书籍信息
     void saveBooksData();
     //读取员工信息
