@@ -83,9 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initPages();
     initProperties();
     startupTasks();
-    toStuffInfo();
-
-    displayBooks();//byboss
+//    toStuffInfo();
 }
 
 void MainWindow::displayBooks(){
@@ -141,7 +139,8 @@ void MainWindow::initPages()
     ui->return_button->setRadius(10);
     ui->share_button->setImage(QPixmap(":/icons/icons/share.png"));
     ui->share_button->setRadius(10);
-    //init identity confirmation page
+    //init book display
+    displayBooks();//byboss
 }
 
 void MainWindow::initProperties()
