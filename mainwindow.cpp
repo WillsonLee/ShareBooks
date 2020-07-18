@@ -587,6 +587,9 @@ void MainWindow::on_Finish_Op_button_clicked()
            BookInfo &scan_book = books[currentBook];
            scan_book.inCloset = 1;
            scan_book.frequency++;
+
+           top_books.put(scan_book);
+           displayBooks();
        }
        toFaceModule();
 }
