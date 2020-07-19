@@ -562,7 +562,8 @@ void MainWindow::toBookInfo() {
     pix=pix.scaled(QSize(w,h));
     ui->operation_image->setAlignment(Qt::AlignCenter);
     ui->operation_image->setPixmap(pix);
-
+    if(currentBook == -1)
+        return;
     if(currentOperation == 0){
         //借书
         ui->BookInfo_again->setText("再借一本");
@@ -601,22 +602,22 @@ MainWindow::~MainWindow()
 void MainWindow::on_borrow_button_clicked()
 {
     currentOperation=0;
-    toFaceModule();
-//    toBookModule();
+//    toFaceModule();
+    toBookModule();
 }
 
 void MainWindow::on_return_button_clicked()
 {
     currentOperation=1;
-    toFaceModule();
-//    toBookModule();
+//    toFaceModule();
+    toBookModule();
 }
 
 void MainWindow::on_share_button_clicked()
 {
     currentOperation=2;
-    toFaceModule();
-//    toBookModule();
+//    toFaceModule();
+    toBookModule();
 }
 
 void MainWindow::on_faceReturn_clicked()
@@ -725,5 +726,10 @@ void MainWindow::on_BookInfo_confirm_clicked()
 
 void MainWindow::on_BookInfo_again_clicked()
 {
+    if(currentBook == -1){
+        updateCountDown(0);
+        backToMain();
+        return;
+    }
     toBookModule();
 }
