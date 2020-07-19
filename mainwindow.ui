@@ -274,8 +274,8 @@ borrow_button:pressed{border-image: url(:/icons/borrow.png);}</string>
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>551</width>
-                <height>227</height>
+                <width>98</width>
+                <height>28</height>
                </rect>
               </property>
              </widget>

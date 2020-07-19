@@ -3,3 +3,5 @@ Debug
 Release
 *.autosave
 cmd.config
+database/faces/*.jpg
+tests/*.jpg

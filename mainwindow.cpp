@@ -149,6 +149,7 @@ void MainWindow::displayBooks(){
 
 void MainWindow::initPages()
 {
+    ui->statusBar->showMessage("初始化主页...");
     //init carousel view
     initCarousel();
     //set buttons size and image
@@ -170,6 +171,7 @@ void MainWindow::initPages()
 
 void MainWindow::initProperties()
 {
+    ui->statusBar->showMessage("初始化属性...");
     //init timer
     timer=NULL;
     timeout=16;
@@ -185,6 +187,7 @@ void MainWindow::initProperties()
 
 void MainWindow::startupTasks()
 {
+    ui->statusBar->showMessage("读取数据库信息...");
     scanBooks("../database/books.txt",books);
     QList<int> keys=books.keys();
     for(int k:keys){
@@ -226,6 +229,7 @@ void MainWindow::startupTasks()
 
 void MainWindow::initCarousel()
 {
+    ui->statusBar->showMessage("初始化轮播图...");
     QDir path("../database/Carousel/");
     QFileInfoList list=path.entryInfoList(QStringList()<<"*.png"<<"*.jpg"<<"*.jpeg");
     for(int i=0;i<list.size();++i){
