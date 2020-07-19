@@ -702,7 +702,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void Recognizing::run()
 {
-    std::vector<int> faces=face_recognize("../database/faces/","../face_cam");
+    std::vector<int> faces=face_recognize("../database/faces/","../face_cam/");
+
     if(faces.size()==1){
         emit recognized(faces[0]);
     }
