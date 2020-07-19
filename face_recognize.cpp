@@ -38,6 +38,9 @@ vector<int> face_recognize(const string& faces_folder, const string& unknow_face
     if(in_file){
         string line;
         while(getline(in_file, line)){
+            // Test
+//            std::cout << line << std::endl;
+            //
             int dot_pos = line.find(",");
             string tmp = line.substr(dot_pos+1);
             if(tmp == "unknown_person")
