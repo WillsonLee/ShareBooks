@@ -4,4 +4,6 @@ Release
 *.autosave
 cmd.config
 database/faces/*.jpg
+database/faces/*.jpeg
 tests/*.jpg
+tests/*.jpeg
