@@ -165,6 +165,10 @@ private slots:
 
     void on_Finish_Op_button_clicked();
 
+    void on_BookInfo_confirm_clicked();
+
+    void on_BookInfo_again_clicked();
+
 private:
     Ui::MainWindow *ui;
     QHash<int,BookInfo> books;

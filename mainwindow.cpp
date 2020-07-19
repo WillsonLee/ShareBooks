@@ -602,18 +602,21 @@ void MainWindow::on_borrow_button_clicked()
 {
     currentOperation=0;
     toFaceModule();
+//    toBookModule();
 }
 
 void MainWindow::on_return_button_clicked()
 {
     currentOperation=1;
     toFaceModule();
+//    toBookModule();
 }
 
 void MainWindow::on_share_button_clicked()
 {
     currentOperation=2;
     toFaceModule();
+//    toBookModule();
 }
 
 void MainWindow::on_faceReturn_clicked()
@@ -712,4 +715,15 @@ void MainWindow::on_Finish_Op_button_clicked()
         displayBooks();
     }
     toBookInfo();
+}
+
+void MainWindow::on_BookInfo_confirm_clicked()
+{
+    updateCountDown(0);
+    backToMain();
+}
+
+void MainWindow::on_BookInfo_again_clicked()
+{
+    toBookModule();
 }
