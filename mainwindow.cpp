@@ -470,6 +470,17 @@ void MainWindow::toFaceModule()
 void MainWindow::toStuffInfo()
 {
     switchToPage(2);
+    if(stuffHoldsView){
+        delete stuffHoldsView;
+    }
+    stuffHoldsView=new QHBoxLayout();
+    if(ui->scrollAreaWidgetContents){
+        delete ui->scrollAreaWidgetContents;
+    }
+    ui->scrollAreaWidgetContents=new QWidget();
+    ui->stuffHoldsScroll->setWidget(ui->scrollAreaWidgetContents);
+    ui->scrollAreaWidgetContents->setLayout(stuffHoldsView);
+    ui->scrollAreaWidgetContents->update();
     if(currentUser!=-1){
         QPixmap pix;
         pix.load("../database/faces/"+QString::number(currentUser)+".jpg");
@@ -488,11 +499,6 @@ void MainWindow::toStuffInfo()
         }
         ui->quotaEdit->setText(quota_text);
         //arrange books view of user current hold
-        if(stuffHoldsView){
-            delete stuffHoldsView;
-        }
-        stuffHoldsView=new QHBoxLayout();
-        ui->scrollAreaWidgetContents->setLayout(stuffHoldsView);
         ui->scrollAreaWidgetContents->resize(20,ui->scrollAreaWidgetContents->height());
         int *left=new int();
         int *right=new int();
@@ -547,13 +553,12 @@ void MainWindow::toBookModule()
 
 void MainWindow::toBookInfo() {
     switchToPage(4);
-    std::string bookImagePath;
     QPixmap pix = bookCovers[currentBook];
     int w=this->width()*0.5;
     int h=this->height()*0.4;
     pix=pix.scaled(QSize(w,h));
-    ui->operation_image->setAlignment(Qt::AlignCenter);
-    ui->operation_image->setPixmap(pix);
+    ui->BookInfo_image->setAlignment(Qt::AlignCenter);
+    ui->BookInfo_image->setPixmap(pix);
     if(currentBook == -1){
         ui->BookInfo_again->setText("无法识别");
         return;
@@ -604,22 +609,25 @@ MainWindow::~MainWindow()
 void MainWindow::on_borrow_button_clicked()
 {
     currentOperation=0;
-//    toFaceModule();
-    toBookModule();
+    toFaceModule();
+//    currentUser=1007;
+//    toBookModule();
 }
 
 void MainWindow::on_return_button_clicked()
 {
     currentOperation=1;
-//    toFaceModule();
-    toBookModule();
+    toFaceModule();
+//    currentUser=1007;
+//    toBookModule();
 }
 
 void MainWindow::on_share_button_clicked()
 {
     currentOperation=2;
-//    toFaceModule();
-    toBookModule();
+    toFaceModule();
+//    currentUser=1007;
+//    toBookModule();
 }
 
 void MainWindow::on_faceReturn_clicked()
@@ -685,7 +693,9 @@ void MainWindow::on_id_cancel_clicked()
 void MainWindow::on_Finish_Op_button_clicked()
 {
     // Get the ISNB number of the scanned book from the file in ISBN_scan folder
-    std::string scan_path("../ISBN_scan/scan_book.txt");
+    QDir dir("../ISBN_scan");
+    QStringList files=dir.entryList(QStringList()<<"*.txt");
+    std::string scan_path(QString(dir.absolutePath()+"/"+files[0]).toStdString());
     std::ifstream in_file(scan_path);
     std::string line, isbn;
     std::getline(in_file, line);
@@ -698,10 +708,11 @@ void MainWindow::on_Finish_Op_button_clicked()
         currentBook = -1;//non-exist book,scan failed
     }
     //-1:none;0:borrow;1:return;2:share
-    if(currentBook!=-1 && currentOperation == 2) {
+    if(currentOperation == 2) {
         // 如果为共享书籍，写入books
         QHash<int,BookInfo> tmp;
-        scanBooks("../ISBN_scan/scan_book.txt", tmp);
+        scanBooks(QString::fromStdString(scan_path), tmp);
+        currentBook=tmp.keys()[0];//assume only one book shared each time
         books.insert(currentBook, tmp[currentBook]);
         top_books.put(tmp[currentBook]);
     } else if(currentBook!=-1 && currentOperation == 0) {

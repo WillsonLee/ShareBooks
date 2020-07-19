@@ -36,7 +36,7 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="main">
        <layout class="QVBoxLayout" name="main_layout" stretch="2,3,3">
@@ -780,27 +780,23 @@ color:white;}</string>
           <x>10</x>
           <y>120</y>
           <width>551</width>
-          <height>361</height>
+          <height>371</height>
          </rect>
         </property>
-        <widget class="QLabel" name="BookInfo_image">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>10</y>
-           <width>511</width>
-           <height>331</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Ubuntu Condensed</family>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="BookInfo_image">
+           <property name="font">
+            <font>
+             <family>Ubuntu Condensed</family>
+            </font>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </widget>
