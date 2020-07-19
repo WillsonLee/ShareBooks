@@ -9,7 +9,7 @@
 
 using namespace std;
 
-string full_cmd="face_recognition";
+string full_cmd="face_recognition --tolerance 0.4";
 
 void initFullPathCmd(){
     ifstream ifs("../cmd.config");
