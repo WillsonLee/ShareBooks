@@ -545,9 +545,34 @@ void MainWindow::toBookModule()
     }
 }
 
-void MainWindow::toBookInfo()
-{
+void MainWindow::toBookInfo() {
     switchToPage(4);
+    std::string bookImagePath;
+    if(currentBook == -1){
+        bookImagePath = "../icons/default_book.jpg";
+        ui->BookInfo_again->setText("无法识别");
+    } else {
+        bookImagePath = "../database/BookImages/"+std::to_string(currentBook);
+    }
+    QPixmap pix;
+    pix.load(QString::fromStdString(bookImagePath));
+
+    int w=this->width()*0.5;
+    int h=this->height()*0.4;
+    pix=pix.scaled(QSize(w,h));
+    ui->operation_image->setAlignment(Qt::AlignCenter);
+    ui->operation_image->setPixmap(pix);
+
+    if(currentOperation == 0){
+        //借书
+        ui->BookInfo_again->setText("再借一本");
+    } else if(currentOperation == 1){
+        //还书
+        ui->BookInfo_again->setText("再还一本");
+    } else if(currentOperation == 2) {
+        //共享书
+        ui->BookInfo_again->setText("继续分享");
+    }
 }
 
 void MainWindow::backToMain()
