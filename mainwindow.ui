@@ -736,7 +736,7 @@ color:white;}</string>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">QPushButton{border:2px solid orange;
+          <string notr="true">QPushButton{border:2px rgb(115, 210, 22);
 background:rgb(115, 210, 22);
 border-radius:20px;
 color:white;}</string>

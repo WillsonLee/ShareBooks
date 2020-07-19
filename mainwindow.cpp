@@ -548,28 +548,30 @@ void MainWindow::toBookModule()
 void MainWindow::toBookInfo() {
     switchToPage(4);
     std::string bookImagePath;
-    if(currentBook == -1){
-        bookImagePath = "../icons/default_book.jpg";
-        ui->BookInfo_again->setText("无法识别");
-    } else {
-        bookImagePath = "../database/BookImages/"+std::to_string(currentBook);
-    }
-    QPixmap pix;
-    pix.load(QString::fromStdString(bookImagePath));
-
+    QPixmap pix = bookCovers[currentBook];
     int w=this->width()*0.5;
     int h=this->height()*0.4;
     pix=pix.scaled(QSize(w,h));
     ui->operation_image->setAlignment(Qt::AlignCenter);
     ui->operation_image->setPixmap(pix);
-    if(currentBook == -1)
+    if(currentBook == -1){
+        ui->BookInfo_again->setText("无法识别");
         return;
+    }
     if(currentOperation == 0){
         //借书
         ui->BookInfo_again->setText("再借一本");
+        stuffs[currentUser].current_hold.append(currentBook);
     } else if(currentOperation == 1){
         //还书
         ui->BookInfo_again->setText("再还一本");
+        QVector<int> &hold = stuffs[currentUser].current_hold;
+        for(int i = 0; i < hold.size(); ++i){
+            if(hold[i] == currentBook){
+                hold.erase(hold.begin()+i);
+                break;
+            }
+        }
     } else if(currentOperation == 2) {
         //共享书
         ui->BookInfo_again->setText("继续分享");
