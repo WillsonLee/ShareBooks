@@ -36,7 +36,7 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="main">
        <layout class="QVBoxLayout" name="main_layout" stretch="2,3,3">
@@ -697,7 +697,102 @@ color:white;}</string>
         </widget>
        </widget>
       </widget>
-      <widget class="QWidget" name="info"/>
+      <widget class="QWidget" name="info">
+       <widget class="QWidget" name="BookInfo_button" native="true">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>509</y>
+          <width>561</width>
+          <height>241</height>
+         </rect>
+        </property>
+        <widget class="QPushButton" name="BookInfo_confirm">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>40</y>
+           <width>251</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{border:2px solid orange;
+background:rgb(245, 121, 0);
+border-radius:20px;
+color:white;}</string>
+         </property>
+         <property name="text">
+          <string>确认</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="BookInfo_again">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>100</y>
+           <width>251</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{border:2px solid orange;
+background:rgb(115, 210, 22);
+border-radius:20px;
+color:white;}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="BookInfo_text_widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>551</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <widget class="QLabel" name="label_4">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>20</y>
+           <width>361</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>                                       请确认书籍</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="BookInfo_image_widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>120</y>
+          <width>551</width>
+          <height>361</height>
+         </rect>
+        </property>
+        <widget class="QLabel" name="BookInfo_image">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>10</y>
+           <width>511</width>
+           <height>331</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
