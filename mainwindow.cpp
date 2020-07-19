@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <queue>
 
+#define STATUS_INFO
+
 /*
 函数：SplitString
 功能：实现字符逗号隔开
@@ -149,7 +151,9 @@ void MainWindow::displayBooks(){
 
 void MainWindow::initPages()
 {
-    ui->statusBar->showMessage("初始化主页...");
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage("初始化主页...",3000);
+#endif
     //init carousel view
     initCarousel();
     //set buttons size and image
@@ -171,7 +175,9 @@ void MainWindow::initPages()
 
 void MainWindow::initProperties()
 {
-    ui->statusBar->showMessage("初始化属性...");
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage("初始化属性...",3000);
+#endif
     //init timer
     timer=NULL;
     timeout=16;
@@ -187,7 +193,9 @@ void MainWindow::initProperties()
 
 void MainWindow::startupTasks()
 {
-    ui->statusBar->showMessage("读取数据库信息...");
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage("读取数据库信息...",3000);
+#endif
     scanBooks("../database/books.txt",books);
     QList<int> keys=books.keys();
     for(int k:keys){
@@ -216,6 +224,19 @@ void MainWindow::startupTasks()
         ui->camera_label->stopSpinning();
     });
     connect(&recog,&Recognizing::recognized,this,[&](int result){
+#ifdef STATUS_INFO
+        QString text="识别完成,员工id#"+QString::number(result);
+        if(result==-2){
+            text+="(多张人脸)";
+        }
+        else if(result==-1){
+            text+="(非员工)";
+        }
+        else{
+            text+=",姓名:"+stuffs[result].name;
+        }
+        ui->statusBar->showMessage(text,3000);
+#endif
         if(result==-2){
             ui->tip_label->setText("请一次识别一个员工!");
         }
@@ -229,7 +250,9 @@ void MainWindow::startupTasks()
 
 void MainWindow::initCarousel()
 {
-    ui->statusBar->showMessage("初始化轮播图...");
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage("初始化轮播图...",3000);
+#endif
     QDir path("../database/Carousel/");
     QFileInfoList list=path.entryInfoList(QStringList()<<"*.png"<<"*.jpg"<<"*.jpeg");
     for(int i=0;i<list.size();++i){
@@ -282,6 +305,9 @@ void MainWindow::scanBooks(QString file,QHash<int,BookInfo> &results)
 
 void MainWindow::saveBooksData()
 {
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage("保存书籍信息...",3000);
+#endif
     QString fileName="../database/books.txt";
     QFileInfo fi(fileName);
     if(fi.isFile()){
@@ -465,6 +491,9 @@ void MainWindow::toFaceModule()
         ui->camera_label->setPixmap(QPixmap(imgs[0].absoluteFilePath()));
         ui->camera_label->startSpinning();
         recog.start();
+#ifdef STATUS_INFO
+        ui->statusBar->showMessage(QString("面部扫描中..."),3000);
+#endif
     }
     else{
         ui->camera_label->setPixmap(QPixmap("../icons/no_cam.jpg"));
@@ -556,6 +585,9 @@ void MainWindow::toBookModule()
 }
 
 void MainWindow::toBookInfo() {
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage(QString("书籍扫描完成,书籍id#%1,书名:%2").arg(currentBook).arg(books[currentBook].title),3000);
+#endif
     switchToPage(4);
     QPixmap pix = bookCovers[currentBook];
     int w=this->width()*0.5;
@@ -603,6 +635,9 @@ void MainWindow::backToMain()
     if(recog.isRunning()){
         recog.terminate();
     }
+#ifdef STATUS_INFO
+    ui->statusBar->showMessage(QString("回到主页面..."),3000);
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -737,6 +772,20 @@ void MainWindow::on_Finish_Op_button_clicked()
 
 void MainWindow::on_BookInfo_confirm_clicked()
 {
+#ifdef STATUS_INFO
+    QString text="员工#"+QString::number(currentUser)+"("+stuffs[currentUser].name+")";
+    if(currentOperation==0){
+        text+="借书#";
+    }
+    else if(currentOperation==1){
+        text+="还书#";
+    }
+    else{
+        text+="共享书籍#";
+    }
+    text+=QString::number(currentBook)+"("+books[currentBook].title+")";
+    ui->statusBar->showMessage(text,3000);
+#endif
     updateCountDown(0);
     backToMain();
 }
