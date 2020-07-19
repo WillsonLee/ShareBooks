@@ -7,3 +7,5 @@ database/faces/*.jpg
 database/faces/*.jpeg
 tests/*.jpg
 tests/*.jpeg
+face_cam/
+ISBN_scan/
