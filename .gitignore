@@ -9,3 +9,5 @@ tests/*.jpg
 tests/*.jpeg
 face_cam/
 ISBN_scan/
+demo/*
+!demo/demo.mkv
