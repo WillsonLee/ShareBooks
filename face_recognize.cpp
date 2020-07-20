@@ -9,7 +9,9 @@
 
 using namespace std;
 
-string full_cmd="face_recognition --tolerance 0.4";
+string full_cmd="face_recognition";//full command pathbased on different machine
+
+string cmd_args="--tolerance 0.4";//command arguments based on different dataset
 
 void initFullPathCmd(){
     ifstream ifs("../cmd.config");
@@ -30,7 +32,7 @@ vector<string>: 识别结果，可能有多个结果，所以存放在vector中�
 vector<int> face_recognize(const string& faces_folder, const string& unknow_faces) {
     vector<int> res;
     string result_file("./result.txt");
-    string cmd = full_cmd + " " + faces_folder + " " + unknow_faces + " > " + result_file;
+    string cmd = full_cmd + " " + cmd_args + " " + faces_folder + " " + unknow_faces + " > " + result_file;
 //    string cmd = "face_recognition " + faces_folder + " " + unknow_faces + " > " + result_file;
     system(cmd.c_str());
     

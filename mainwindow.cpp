@@ -635,9 +635,6 @@ void MainWindow::backToMain()
     if(recog.isRunning()){
         recog.terminate();
     }
-#ifdef STATUS_INFO
-    ui->statusBar->showMessage(QString("回到主页面..."),3000);
-#endif
 }
 
 MainWindow::~MainWindow()
